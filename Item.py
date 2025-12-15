@@ -9,5 +9,3 @@ class Item:
 
 pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon")
 print(Pokeball)
-pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon")
-print(Pokeball)
