@@ -1,0 +1,133 @@
+# Description: Game class
+
+# Import modules
+
+from room import Room
+from player import Player
+from command import Command
+from actions import Actions
+from Item import Item
+
+class Game:
+
+    # Constructor
+    def __init__(self):
+        self.finished = False
+        self.rooms = []
+        self.commands = {}
+        self.player = None
+
+
+   
+    def setup(self):
+
+
+        # Setup commands
+
+        help = Command("help", " : afficher cette aide", Actions.help, 0)
+        self.commands["help"] = help
+        quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
+        self.commands["quit"] = quit
+        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
+        self.commands["go"] = go
+        back = Command("back"," : revenir en arrière", Actions.back, 0)
+        self.commands["back"] = back
+       
+       
+        # Setup rooms
+
+#Ville de départ
+
+
+        Maison_du_joueur = Room("Maison_du_joueur", "dans votre Maison.")
+        self.rooms.append(Maison_du_joueur)
+        Maison_du_professeur = Room("Maison_du_professeur ", "dans la maison du professeur")
+        self.rooms.append(Maison_du_professeur)
+        Arène = Room("Arène du Souffle Naissant", "au sein de l’Arène du Souffle Naissant, là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme.")
+        self.rooms.append(Arène)
+        Pilier = Room("Le Pilier de l’Aube Perdue", "au sein du Pilier de l’Aube Perdue, chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier.")
+        self.rooms.append(Pilier)
+        #Boutique = Room("Boutique", "au sein de la Boutique,l’endroit où chaque aventurier trouve ce dont il a besoin pour poursuivre sa route.")
+        #self.rooms.append(Boutique)
+        Route1 = Room("Route1", "sur le chemin où la biodiversité est plus que développée et vous enmenera jusqu'à la prochaine arène.")
+        self.rooms.append(Route1)
+       
+       # history_cmd = Command("history", " : afficher les lieux déjà visités", Actions.history, 0)
+        #self.commands["history"] = history_cmd
+
+       
+       
+       
+        #cottage = Room("Cottage", "dans un petit chalet pittoresque avec un toit de chaume. Une épaisse fumée verte sort de la cheminée.")
+        #self.rooms.append(cottage)
+        #swamp = Room("Arène ", "dans un marécage sombre et ténébreux. L'eau bouillonne, les abords sont vaseux.")
+        #self.rooms.append(swamp)
+        #castle = Room("Castle", "dans un énorme château fort avec des douves et un pont levis. Sur les tours, des flèches en or massif.")
+        #self.rooms.append(castle)
+
+        # Create exits for rooms
+
+
+       
+
+        Maison_du_joueur.exits = {"N": Pilier, "E" : None, "S" : None, "O" : None}
+        Maison_du_professeur.exits = {"N" : Arène, "E" : None, "S" :Pilier, "O" :None}
+        Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
+        Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
+        #Boutique.exits = {"N" : Arène, "E" : None, "S" : Pilier, "O" : Maison_du_professeur}
+        #castle.exits = {"N" : forest, "E" : swamp, "S" : None, "O" : None}
+       
+       
+        Arcktan = Item("Arcktan","Pokémon de type Plante",Arène,"...")
+        #Obalie=Character("Obalie","Pokémon de type ...",Arène,"...")
+        #Terhal=Character("Terhal","Pokémon de type Plante", Arène,"...")
+        #Poussifeu=Character("Poussifeu","Pokémon de type Feu",Arène,"...")
+        #Tarsal=Character("Tarsal","Pokémon de type Psy",Arène,"...")
+        #Ouisticram=Character("Ouisticram","Pokémonde type Feu","...")
+       
+        # Setup player and starting room
+
+        self.player = Player(input("\nEntrez votre nom: "))
+        self.player.current_room = Maison_du_joueur
+        self.player.history.append(self.player.current_room)
+       
+
+    # Play the game
+    def play(self):
+        self.setup()
+        self.print_welcome()
+        # Loop until the game is finished
+        while not self.finished:
+            # Get the command from the player
+            self.process_command(input("> "))
+        return None
+
+    # Process the command entered by the player
+    def process_command(self, command_string) -> None:
+
+        # Split the command string into a list of words
+        list_of_words = command_string.split(" ")
+        command_word = list_of_words[0]
+
+        # If the command is not recognized, print an error message
+        if command_word not in self.commands.keys():
+            print()
+        # If the command is recognized, execute it
+        else:
+            command = self.commands[command_word]
+            command.action(self, list_of_words, command.number_of_parameters)
+
+    # Print the welcome message
+    def print_welcome(self):
+        print(f"\nBienvenue {self.player.name} dans ce jeu d'aventure !")
+        print("Entrez 'help' si vous avez besoin d'aide.")
+        print(self.player.current_room.get_long_description())
+   
+
+def main():
+    # Create a game object and play the game
+    Game().play()
+   
+
+if __name__ == "__main__":
+    main()
