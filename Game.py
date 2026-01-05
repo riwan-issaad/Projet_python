@@ -7,6 +7,8 @@ from player import Player
 from command import Command
 from actions import Actions
 from Item import Item
+from character import Character
+
 
 class Game:
 
@@ -90,7 +92,13 @@ class Game:
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = Maison_du_joueur
         self.player.history.append(self.player.current_room)
-       
+        
+       # Exemple
+        forest = Room("Forest", "une forêt enchantée...")
+        gandalf = Character("Gandalf", "un magicien blanc", forest, ["Abracadabra !"])
+
+        # Ajouter le PNJ dans la pièce
+        forest.characters.append(gandalf)
 
     # Play the game
     def play(self):

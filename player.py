@@ -65,3 +65,20 @@ class Player():
     def history(self, history):
         history=[]
         history.append
+
+def look(self):
+    room = self.current_room
+    print(f"\nVous êtes dans {room.description}\n")
+
+    # Afficher les items
+    if room.inventory:
+        print("On voit :")
+        for item in room.inventory.values():
+            print(f"    - {item}")
+        else:
+            print("Il n'y a rien ici.")
+
+        # Afficher les PNJ
+        if room.characters:
+            for char in room.characters:
+                print(f"    - {char}")

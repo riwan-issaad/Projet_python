@@ -160,3 +160,7 @@ class Actions:
             print("\t- " + str(command))
         print()
         return True
+
+for character in room.characters:
+    print(f"    - {character}")
+
