@@ -66,6 +66,7 @@ class Game:
 
         Maison_du_joueur_eau = Room("Maison_du_joueur ","dans votre maison bercée par le clapotis de l’eau.")
         self.rooms.append(Maison_du_joueur_eau)
+        
         Maison_du_maitre_eau = Room("Maison_du_maitre_eau ","dans la demeure du Maître, imprégnée de sagesse et d’embruns.")
         self.rooms.append(Maison_du_maitre_eau)
 
@@ -82,7 +83,8 @@ class Game:
         Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
         Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
         Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+        La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+        Route1.exits = {"N": La_Source_des_Profondeurs , "E": None, "S": None, "O": None}
 
 
 ## Village Voltéria
@@ -103,11 +105,46 @@ class Game:
         Route3 = Room("Route Orageuse","sur une route balayée par le vent et traversée d’arcs électriques.")
         self.rooms.append(Route3)
 
+        Maison_du_joueur_eau.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Le_Conducteur_Ancestral, "O": None}
+        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
+        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+        Route2.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+    
 
-        Maison_du_joueur_elec.exits = {"N": Conducteur, "E": None, "S": None, "O": None}
-        Maison_du_maitre_elec.exits = {"N": Arene_elec, "E": None, "S": Conducteur, "O": None}
-        Arene_elec.exits = {"N": Route3, "E": None, "S": None, "O": None}
-        Conducteur.exits = {"N": Arene_elec, "E": None, "S": None, "O": Maison_du_maitre_elec}
+    #Village de la ligue de Pokémon(Finale)
+
+        Maison_du_joueur_elec = Room("Sanctuaire de l’Élu","dans le sanctuaire où vous avez grandi, désormais chargé d’une énergie électrique pure, ""chaque mur résonnant de votre destinée de Maître Pokémon.")
+        self.rooms.append(Maison_du_joueur_elec)
+
+
+        Maison_du_Maître_des_Courants = Room("Antre du Maître des Courants","dans la demeure du Maître Suprême, un lieu sacré où la foudre danse librement, ""témoignant des combats légendaires ayant forgé la Ligue.")
+        self.rooms.append(Maison_du_Maître_des_Courants)
+
+
+        Arene_elec = Room("Arène de l’Apothéose Foudroyante","au cœur de l’arène finale, suspendue entre ciel et terre, où chaque pas fait gronder le tonnerre ""et où seuls les véritables champions survivent à la foudre.")
+        self.rooms.append(Arene_elec)
+
+
+        Le_Conducteur_Ancestral = Room("Pilier du Conducteur Ancestral","devant l’ancien pilier de métal céleste, canal sacré de la foudre originelle, ""lieu où les Maîtres jurent fidélité à l’équilibre du monde Pokémon.")
+        self.rooms.append(Le_Conducteur_Ancestral)
+
+
+        #Route4 = Room("Voie du Jugement Orageux","sur la route menant à la Ligue, déchirée par des éclairs incessants, ""où chaque dresseur affronte ses peurs avant le combat final.")
+        #self.rooms.append(Route4)
+        Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
+        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
+        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
+        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+        Route3.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+
+
+
+
+        #Maison_du_joueur_elec.exits = {"N": Conducteur, "E": None, "S": None, "O": None}
+        #Maison_du_maitre_elec.exits = {"N": Arene_elec, "E": None, "S": Conducteur, "O": None}
+        #Arene_elec.exits = {"N": Route3, "E": None, "S": None, "O": None}
+        #Conducteur.exits = {"N": Arene_elec, "E": None, "S": None, "O": Maison_du_maitre_elec}
 
 
         # Create exits for rooms
@@ -120,15 +157,6 @@ class Game:
         #Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
         #Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
         #Boutique.exits = {"N" : Arène, "E" : None, "S" : Pilier, "O" : Maison_du_professeur}
-        #castle.exits = {"N" : forest, "E" : swamp, "S" : None, "O" : None}
-       
-       
-        Arcktan = Item("Arcktan","Pokémon de type Plante",Arène,"...")
-        #Obalie=Character("Obalie","Pokémon de type ...",Arène,"...")
-        #Terhal=Character("Terhal","Pokémon de type Plante", Arène,"...")
-        #Poussifeu=Character("Poussifeu","Pokémon de type Feu",Arène,"...")
-        #Tarsal=Character("Tarsal","Pokémon de type Psy",Arène,"...")
-        #Ouisticram=Character("Ouisticram","Pokémonde type Feu","...")
        
         # Setup player and starting room
 
