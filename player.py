@@ -6,6 +6,7 @@ class Player():
         self.name = name
         self.current_room = None
         self.history = []
+        self.inventory = {} 
 
        
 
@@ -66,19 +67,30 @@ class Player():
         history=[]
         history.append
 
-def look(self):
-    room = self.current_room
-    print(f"\nVous êtes dans {room.description}\n")
+    def look(self):
+        room = self.current_room
+        print(f"\nVous êtes dans {room.description}\n")
 
-    # Afficher les items
-    if room.inventory:
-        print("On voit :")
-        for item in room.inventory.values():
-            print(f"    - {item}")
-        else:
-            print("Il n'y a rien ici.")
+        # Afficher les items
+        if room.inventory:
+            print("On voit :")
+            for item in room.inventory.values():
+                print(f"    - {item}")
+            else:
+                print("Il n'y a rien ici.")
 
-        # Afficher les PNJ
-        if room.characters:
-            for char in room.characters:
-                print(f"    - {char}")
+            # Afficher les PNJ
+            if room.characters:
+                for char in room.characters:
+                    print(f"    - {char}")
+    def get_inventory(self):
+        if not self.inventory:
+            return "Votre inventaire est vide."
+
+        inventory_string = "Vous disposez des items suivants :\n"
+        for item in self.inventory.values():
+            inventory_string += f"    - {item.name} : {item.description} ({item.weight} kg)\n"
+        return inventory_string
+        
+
+        
