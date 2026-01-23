@@ -5,7 +5,7 @@
 from room import Room
 from player import Player
 from command import Command
-from actions import Actions
+from action import Actions
 from Item import Item
 from character import Character
 
