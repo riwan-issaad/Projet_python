@@ -1,5 +1,25 @@
 # Define the Player class.
 class Player():
+    """
+    This class represents the player in the game. The player has a name and
+    a current room, and can move between rooms.
+
+    Attributes:
+        name (str): The name of the player.
+        current_room (Room): The room where the player is currently located.
+
+    Methods:
+        __init__(self, name): The constructor.
+        move(self, direction): Moves the player to another room.
+
+    Examples:
+
+    >>> player = Player("Alice")
+    >>> player.name
+    'Alice'
+    >>> player.current_room is None
+    True
+    """
 
     # Define the constructor.
     def __init__(self, name):
@@ -9,10 +29,19 @@ class Player():
         self.inventory = {} 
 
        
-
-   
     # Define the move method.
     def move(self, direction):
+        """
+        Moves the player in the specified direction.
+
+        If no room exists in that direction, an error message is displayed.
+
+        Args:
+            direction (str): The direction to move to.
+
+        Returns:
+            bool: True if the move was successful, False otherwise.
+        """
         # Get the next room from the exits dictionary of the current room.
         next_room = self.current_room.exits[direction]
 
