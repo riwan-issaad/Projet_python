@@ -59,7 +59,9 @@ class Actions:
         Orientations={"n": "N", "nord": "N","NORD":"N","Nord":"N","N":"N",
                       "e": "E", "est": "E","EST":"E","Est":"E","E":"E",
                       "s": "S", "sud": "S","SUD":"S","Sud":"S","S":"S",
-                      "O":"O","o": "O", "ouest": "O","Ouest":"O","OUEST":"O"}
+                      "O":"O","o": "O", "ouest": "O","Ouest":"O","OUEST":"O"
+                      "u":"U","up":"U","UP":"U":"Up":"U","U":"U"
+                      "d":"D","down":"D","DOWN":"D":"Down":"D","D":"D"}
 
         if direction in Orientations:
              direction = Orientations[direction]
