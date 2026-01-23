@@ -162,7 +162,28 @@ class Actions:
             print("\t- " + str(command))
         print()
         return True
+        
+    def look(game, list_of_words, number_of_parameters):
+    """
+    Display the description of the current room and the items present in it.
 
-for character in room.characters:
-    print(f"    - {character}")
+    Args:
+        game (Game): The game object.
+        list_of_words (list): The list of words in the command.
+        number_of_parameters (int): The number of parameters expected by the command.
+
+    Returns:
+        bool: True if the command was executed successfully, False otherwise.
+    """
+    l = len(list_of_words)
+    if l != number_of_parameters + 1:
+        command_word = list_of_words[0]
+        print(MSG0.format(command_word=command_word))
+        return False
+
+    player = game.player
+    player.look()  # Appelle la méthode look() du joueur
+    return True
+
+
 
