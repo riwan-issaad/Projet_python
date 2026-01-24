@@ -66,9 +66,10 @@ class Game:
         self.rooms.append(Boutique)
 
         Maison1.exits = {"N": Pilier1, "E" : None, "S" : None, "O" : None}
-        Professeur1.exits = {"N" : Arène1, "E" : None, "S" :Pilier1, "O" :None}
+        Professeur1.exits = {"N" : Arène1, "E" : Boutique, "S" :Pilier1, "O" :None}
         Arène1.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
         Pilier1.exits = {"N" : None, "E" : Boutique , "S" : None, "O" : Professeur1}
+        Boutique.exits = {"N" : Arène1, "E" : None, "S" : Pilier1, "O" : Professeur1}
        
 #OBJET DANS VILLAGE DE DEPART
         Carte = Item("Carte", "une carte mystérieuse", 0.1)
@@ -77,8 +78,15 @@ class Game:
         Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
         Professeur1.inventory["XP"] = Xp
 #Perosnnage dans le village de départ
-        Historien = Character("Historien"," un historien ",Pilier1,["Bonjour je suis un historien et je suis la pour vous parler de ce pilier","Sait-tu depuis combien de temps ce pilier est ici?","Cela fait eniron 200 ans que ce pilier est ici."])
-        Professeur1.characters["Historien"] = Historien
+        Eldor = Character("Professeur Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
+        Pilier_ancien = Character("Ancien du Pilier", "un vieil homme sage qui veille sur le Pilier.", Pilier1, ["Que la lumière t'accompagne, jeune voyageur."])
+        Liora = Character("Liora", "la boutiqueuse aux mille potions.", Boutique, ["Bienvenue dans ma boutique !"])
+
+        # Ajouter les PNJ aux rooms
+        Professeur1.characters["Professeur Eldor"] = Eldor
+        Pilier1.characters["Ancien du Pilier"] = Pilier_ancien
+        Boutique.characters["Liora"] = Liora
+
 
 
 
