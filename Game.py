@@ -34,12 +34,17 @@ class Game:
         self.commands["go"] = go
         back = Command("back"," : revenir en arrière", Actions.back, 0)
         self.commands["back"] = back
-        # Exemple d’ajout dans game.setup() ou game.commands
         game.commands["look"] = Command("look","Permet d'observer la pièce.",Actions.look,0)
+        self.commands["look"]= look
+        game.commands["take"] = Command("take","Permet de prendre un item de la pièce.",Actions.take,1)
+        self.commands["take"] = take
+        game.commands["drop"] = Command("drop","Permet de reposer un item dans la pièce.",Actions.drop,1)
+        self.commands["drop"] = drop
+        game.commands["check"] = Command("check","Permet de vérifier le contenu de l'inventaire.",Actions.check,0)
+        self.commands["ckeck"] = check
 
        
-       
-        # Setup rooms
+#Setup Room
 
 #Village de départ
 
