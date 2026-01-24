@@ -70,7 +70,7 @@ class Game:
 
         Maison1.exits = {"N": Pilier1, "E" : None, "S" : None, "O" : None}
         Professeur1.exits = {"N" : Arène1, "E" : Boutique, "S" :Pilier1, "O" :None}
-        Arène1.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
+        Arène1.exits = {"N" : Pilier2, "E" : None, "S" : None, "O" : None}
         Pilier1.exits = {"N" : None, "E" : Boutique , "S" : None, "O" : Professeur1}
         Boutique.exits = {"N" : Arène1, "E" : None, "S" : Pilier1, "O" : Professeur1}
        
@@ -81,93 +81,79 @@ class Game:
         Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
         Professeur1.inventory["XP"] = Xp
 
-#Perosnnage dans le village de départ
-        Eldor = Character("Professeur Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
-        Pilier_ancien = Character("Ancien du Pilier", "un vieil homme sage qui veille sur le Pilier.", Pilier1, ["Que la lumière t'accompagne, jeune voyageur."])
-        Liora = Character("Liora", "la boutiqueuse aux mille potions.", Boutique, ["Bienvenue dans ma boutique !"])
+#PERSONNAGE DANS LE VILLAGE DE DEPART
 
-        # Ajouter les PNJ aux rooms
+        Eldor = Character("Professeur Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
         Professeur1.characters["Professeur Eldor"] = Eldor
+        Pilier_ancien = Character("Ancien du Pilier", "un vieil homme sage qui veille sur le Pilier.", Pilier1, ["Que la lumière t'accompagne, jeune voyageur."])
         Pilier1.characters["Ancien du Pilier"] = Pilier_ancien
+        Liora = Character("Liora", "la boutiqueuse aux mille potions.", Boutique, ["Bienvenue dans ma boutique !"])
         Boutique.characters["Liora"] = Liora
 
 
 
-
-
-
 # Village d'Eau
-        Pilier2 = Room("Pilier 2 "," le deuxieme pilier")
+
+
+        Pilier2 = Room("Pilier des Marées Anciennes","devant le Pilier des Marées Anciennes, vestige sacré où l’eau et le temps semblent s’entrelacer.")
         self.rooms.append(Pilier2)
-
-        Maison_du_joueur_eau = Room("Maison_du_joueur ","dans votre maison bercée par le clapotis de l’eau.")
-        self.rooms.append(Maison_du_joueur_eau)
-        
-        Maison_du_maitre_eau = Room("Maison_du_maitre_eau ","dans la demeure du Maître, imprégnée de sagesse et d’embruns.")
-        self.rooms.append(Maison_du_maitre_eau)
-
-        Arène_des_Flots_Murmurants = Room("Arène des Flots Murmurants","au cœur de l’Arène des Flots Murmurants, où chaque combat suit le rythme des marées.")
-        self.rooms.append(Arène_des_Flots_Murmurants)
-
-        La_Source_des_Profondeurs = Room("La Source des Profondeurs","devant une source cristalline où l’eau semble observer chaque voyageur.")
-        self.rooms.append(La_Source_des_Profondeurs)
-
-        Route2 = Room("Route Aquatique","sur un sentier bordé de canaux menant vers de nouvelles terres.")
-        self.rooms.append(Route2)
+        Professeur2 = Room("Sanctuaire du Maître Ondin","dans la demeure du Maître Ondin, imprégnée de sagesse, de coquillages anciens et d’embruns.")
+        self.rooms.append(Professeur2)
+        Arène2= Room("Arène des Flots Murmurants","au cœur de l’Arène des Flots Murmurants, où chaque combat suit le rythme des marées et du courage.")
+        self.rooms.append(Arène2)
+        Boutique2 = Room("Boutique des Courants","dans la Boutique des Courants, où fioles, filets et objets aquatiques reposent au rythme de l’eau.")
+        self.rooms.append(Boutique2)
 
 
-        #Maison_du_joueur_eau.exits = {"N": None, "E": None, "S": None, "O": None}
-        #Maison_du_maitre_eau.exits = {"N": None, "E": None, "S": None, "O": None}
-        #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        #La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-        #Pilier2.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
+
+        Professeur2.exits = {"N": Arène2, "E": Boutique2, "S": Pilier2, "O": None}
+        Arène2.exits = {"N":Pilier3, "E": None, "S": None, "O": None}
+        Pilier2.exits = {"N": None, "E": Boutique2, "S": None, "O": Professeur2}
+        Boutique2.exits = {"N": Arène2, "E": None, "S": Pilier2, "O": Professeur2}
+
+#OBJET DANS VILLAGE D'EAU
+        Potion = Item("Potion", "Restaure un peu de PV.", 0.1)
+        Boutique2.inventory["Potion"] = Potion
+        Super_Potion = Item("Super Potion", "Restaure beaucoup de PV.", 0.2)
+        Boutique2.inventory["Super_Potion"] = Super_Potion
+
+#PERONNAGE DANS VILLAGE D'EAU
+
+        Mira = Character("Mira","une marchande spécialisée dans les objets liés aux Pokémon de type Eau.",Boutique2,["Bienvenue ! L’eau cache toujours quelque chose d’utile.","Les dresseurs avisés ne partent jamais sans potions.","Ces objets viennent des profondeurs… choisis bien."])
+        Boutique2.characters["Mira"] = Mira
+        Aurelion = Character("Aurelion","le Champion de l’Arène Eau, calme et implacable comme l’océan.",Arène2,["L’eau s’adapte à tout… comme un bon dresseur.","Chaque vague peut renverser un combat.","Montre-moi que tu sais suivre le rythme des marées."])
+        Arène2.characters["Aurelion"] = Aurelion
+        Ondin = Character("Maître Ondin","le Maître des Pokémon Eau, aussi calme que l’océan et aussi redoutable qu’une tempête soudaine.",Maison_du_maitre_eau,["L’eau enseigne la patience, mais punit la précipitation.","Un dresseur doit apprendre à s’adapter, comme la mer.","Avant d’affronter l’arène, écoute ce que murmure l’eau."])
+        Professeur3.characters["Ondin"] = Ondin
+
+#Village de la ligue de Pokémon(Finale)
+
+        Professeur3 = Room("Antre du Maître des Courants","dans la demeure du Maître Suprême, un lieu sacré où la foudre danse librement, ""témoignant des combats légendaires ayant forgé la Ligue.")
+        self.rooms.append(Professeur3)
+        Arène3 = Room("Arène de l’Apothéose Foudroyante","au cœur de l’arène finale, suspendue entre ciel et terre, où chaque pas fait gronder le tonnerre ""et où seuls les véritables champions survivent à la foudre.")
+        self.rooms.append(Arène3)
+        Pilier3 = Room("Pilier du Conducteur Ancestral","devant l’ancien pilier de métal céleste, canal sacré de la foudre originelle, ""lieu où les Maîtres jurent fidélité à l’équilibre du monde Pokémon.")
+        self.rooms.append(Pilier3)
+        Boutique3 = Room("Boutique du Panthéon Pokémon","dans la boutique légendaire de la Ligue Pokémon, réservée aux dresseurs d’élite.")
+        self.rooms.append(Boutique3)
+
+
+
+#Création des sorties entre les pièces du village de la ligue
+
+        Professeur3.exits = {"N": Arène3, "E": Boutique3, "S": Pilier3, "O": None}
+        Arène3.exits = {"N": None, "E": None, "S": None, "O": None}
+        Pilier3.exits = {"N": None, "E": Boutique3, "S": None, "O": Professeur3}
+        Boutique3.exits = {"N": Arène3, "E": None, "S": Pilier3, "O": Professeur3}
+
+#OBJET DANS VILLAGE DE LA LIGUE
+
+        Amulette = Item("Amulette du Champion", "Symbole ultime de victoire.", 0.1)
+        Arène3.inventory["Amulette"] = Amulette
+
+#PERSONNAGE DANS VILLAGE DE LA LIGUE
+
     
-
-    #Village de la ligue de Pokémon(Finale)
-
-        Maison_du_joueur_elec = Room("Sanctuaire de l’Élu","dans le sanctuaire où vous avez grandi, désormais chargé d’une énergie électrique pure, ""chaque mur résonnant de votre destinée de Maître Pokémon.")
-        self.rooms.append(Maison_du_joueur_elec)
-
-
-        Maison_du_Maître_des_Courants = Room("Antre du Maître des Courants","dans la demeure du Maître Suprême, un lieu sacré où la foudre danse librement, ""témoignant des combats légendaires ayant forgé la Ligue.")
-        self.rooms.append(Maison_du_Maître_des_Courants)
-
-
-        Arene_elec = Room("Arène de l’Apothéose Foudroyante","au cœur de l’arène finale, suspendue entre ciel et terre, où chaque pas fait gronder le tonnerre ""et où seuls les véritables champions survivent à la foudre.")
-        self.rooms.append(Arene_elec)
-
-
-        Le_Conducteur_Ancestral = Room("Pilier du Conducteur Ancestral","devant l’ancien pilier de métal céleste, canal sacré de la foudre originelle, ""lieu où les Maîtres jurent fidélité à l’équilibre du monde Pokémon.")
-        self.rooms.append(Le_Conducteur_Ancestral)
-
-
-        #Route4 = Room("Voie du Jugement Orageux","sur la route menant à la Ligue, déchirée par des éclairs incessants, ""où chaque dresseur affronte ses peurs avant le combat final.")
-        #self.rooms.append(Route4)
-        #Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
-        #Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
-        #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-       # Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-       # Route3.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
-
-
-
-
-        #Maison_du_joueur_elec.exits = {"N": Conducteur, "E": None, "S": None, "O": None}
-        #Maison_du_maitre_elec.exits = {"N": Arene_elec, "E": None, "S": Conducteur, "O": None}
-        #Arene_elec.exits = {"N": Route3, "E": None, "S": None, "O": None}
-        #Conducteur.exits = {"N": Arene_elec, "E": None, "S": None, "O": Maison_du_maitre_elec}
-
-
-        # Create exits for rooms
-
-
-       
-
-        #Maison_du_joueur.exits = {"N": Pilier, "E" : None, "S" : None, "O" : None}
-        #Maison_du_professeur.exits = {"N" : Arène, "E" : None, "S" :Pilier, "O" :None}
-        #Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
-        #Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
-        #Boutique.exits = {"N" : Arène, "E" : None, "S" : Pilier, "O" : Maison_du_professeur}
        
         # Setup player and starting room
 
