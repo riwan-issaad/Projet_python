@@ -291,6 +291,7 @@ class Actions:
             message = character.get_msg()
             print(f"\n{character_name}: {message}\n")
             return True
+            game.quest_manager.complete_objective(f"Parler à {character_name}")
         else:
             print(f"\nLe personnage '{character_name}' n'est pas ici.\n")
             return False
@@ -305,50 +306,6 @@ class Actions:
         
         game.quest_manager.show_quests()
         return True
-
-    # Dans la méthode take():
-    def take(game, list_of_words, number_of_parameters):
-        """..."""
-        l = len(list_of_words)
-        if l != number_of_parameters + 1:
-            command_word = list_of_words[0]
-            print(MSG1.format(command_word=command_word))
-            return False
-
-        player = game.player
-        item_name = list_of_words[1]
-
-        player.take(item_name)
-        
-        # Vérifier les objectifs de quête liés aux items
-        game.quest_manager.complete_objective(f"Prendre {item_name}")
-        
-        return True
-
-    # Dans la méthode talk():
-    def talk(game, list_of_words, number_of_parameters):
-        """..."""
-        l = len(list_of_words)
-        if l != number_of_parameters + 1:
-            command_word = list_of_words[0]
-            print(MSG1.format(command_word=command_word))
-            return False
-        
-        player = game.player
-        character_name = list_of_words[1]
-        
-        if character_name in player.current_room.characters:
-            character = player.current_room.characters[character_name]
-            message = character.get_msg()
-            print(f"\n{character_name}: {message}\n")
-            
-            # Vérifier les objectifs de quête liés aux interactions
-            game.quest_manager.check_action_objectives("parler", character_name)
-            
-            return True
-        else:
-            print(f"\nLe personnage '{character_name}' n'est pas ici.\n")
-            return False
 
 
 

@@ -46,7 +46,7 @@ class Game:
         drop = Command("drop","Permet de reposer un item dans la pièce.",Actions.drop,1)
         self.commands["drop"] = drop
         check = Command("check","Permet de vérifier le contenu de l'inventaire.",Actions.check,0)
-        self.commands["ckeck"] = check
+        self.commands["check"] = check
         talk = Command("talk", " <someone> : parler avec un personnage", Actions.talk, 1)
         self.commands["talk"] = talk
 
@@ -176,8 +176,9 @@ class Game:
         self.quest_manager.add_quest(quest1)
         self.quest_manager.activate_quest("Cherche la réponse à l'énigme")
 
-        #quest2 = Quest("Obtiens la Clé Magique", "Parle au Professeur Eldor pour obtenir la Clé Magique qui te permettra d'accéder à des objets rares en boutique", ["Parler à Professeur Eldor", "Échanger la Clé à la boutique"], "Accès aux objets rares")
-        #self.quest_manager.add_quest(quest2)
+        quest2 = Quest("Obtiens la Clé Magique", "Parle à Eldor pour obtenir la Clé Magique", ["Parler à Eldor", "Prendre Clé Magique"], "Accès aux objets rares")
+        self.quest_manager.add_quest(quest2)
+        self.quest_manager.activate_quest("talk Eldor")
 
     # Play the game
     def play(self):
