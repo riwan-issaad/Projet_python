@@ -90,8 +90,8 @@ class Game:
 
 #PERSONNAGE DANS LE VILLAGE DE DEPART
 
-        Eldor = Character("Professeur Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
-        Professeur1.characters["Professeur Eldor"] = Eldor
+        Eldor = Character("Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
+        Professeur1.characters["Eldor"] = Eldor
         
         Ancien = Character("Ancien", "un vieil homme sage qui veille sur le Pilier.", Pilier1, ["Que la lumière t'accompagne, jeune voyageur."])
         Pilier1.characters["Ancien"] = Ancien

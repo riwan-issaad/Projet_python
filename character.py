@@ -70,27 +70,3 @@ class Character:
         """
         # Les personnages ne se déplacent plus - ils restent dans leur salle initiale
         pass
-        from Game import DEBUG
-        
-        if random.choice([True, False]):
-            # Récupérer les sorties disponibles (non None)
-            available_exits = [room for room in self.current_room.exits.values() if room is not None]
-            
-            # Si des sorties disponibles existent, choisir une au hasard
-            if available_exits:
-                # Retirer le personnage de la pièce actuelle
-                if self.name in self.current_room.characters:
-                    del self.current_room.characters[self.name]
-                
-                # Se déplacer vers la nouvelle pièce
-                self.current_room = random.choice(available_exits)
-                
-                # Ajouter le personnage à la nouvelle pièce
-                self.current_room.characters[self.name] = self
-                
-                if DEBUG:
-                    print(f"DEBUG: {self.name} s'est déplacé vers {self.current_room.name}")
-                
-                return True
-        
-        return False
