@@ -22,6 +22,8 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
+        self.quest_manager = None  # ← AJOUTER CECI
+
 
 
    
@@ -201,6 +203,27 @@ class Game:
         self.print_welcome()
         # Loop until the game is finished
         while not self.finished:
+            if self.win():
+                print("\n" + "="*60)
+                print("🏆 VICTOIRE! 🏆")
+                print("="*60)
+                print(f"Félicitations {self.player.name}!")
+                print("Vous avez complété toutes les quêtes et remporté la victoire!")
+                print("="*60 + "\n")
+                self.finished = True
+                break
+            
+            if self.loose():
+                print("\n" + "="*60)
+                print("💀 DÉFAITE! 💀")
+                print("="*60)
+                print(f"Désolé {self.player.name}!")
+                print("Vous êtes entré dans l'Arène Finale sans la Carte protectrice.")
+                print("Vous avez été foudroyé par l'énergie du lieu!")
+                print("="*60 + "\n")
+                self.finished = True
+                break
+
             for room in self.rooms:
                 for character in list(room.characters.values()):
                     character.move()
@@ -229,8 +252,45 @@ class Game:
         print(f"\nBienvenue {self.player.name} dans ce jeu d'aventure !")
         print("Entrez 'help' si vous avez besoin d'aide.")
         print(self.player.current_room.get_long_description())
-   
 
+        
+    def win(self):
+        """
+        Vérifie si le joueur a gagné la partie.
+        Le joueur gagne quand toutes les quêtes sont complétées.
+        
+        Returns:
+            bool: True si toutes les quêtes sont complétées, False sinon.
+        """
+        if self.quest_manager is None:
+            return False
+        
+        all_quests = self.quest_manager.get_all_quests()
+        
+        if len(all_quests) == 0:
+            return False
+        
+        for quest in all_quests:
+            if not quest.is_completed:
+                return False
+        
+        return True
+   
+    def loose(self):
+        """
+        Vérifie si le joueur a perdu la partie.
+        Le joueur perd s'il entre dans l'Arène Finale sans posséder la Carte.
+        
+        Returns:
+            bool: True si le joueur a perdu, False sinon.
+        """
+        if self.player.current_room.name == "Arène de l'Apothéose Foudroyante":
+            if "Carte" not in self.player.inventory:
+                return True
+        
+        return False
+
+        
 def main():
     # Create a game object and play the game
     Game().play()
