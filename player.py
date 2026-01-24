@@ -113,6 +113,23 @@ class Player():
         print(self.current_room.get_long_description())
         print(self.current_room.get_inventory())
 
+    # ...existing code...
+
+    def take(self, item_name):
+        """
+        Permet au joueur de prendre un objet dans la pièce actuelle.
+
+        Args:
+            item_name (str): Le nom de l'objet à prendre.
+        """
+        if item_name in self.current_room.inventory:
+            item = self.current_room.inventory[item_name]
+            self.inventory[item_name] = item
+            del self.current_room.inventory[item_name]
+            print(f"Vous avez pris {item.name}.")
+        else:
+            print(f"L'objet '{item_name}' n'existe pas dans cette pièce.")
+
         
 
         

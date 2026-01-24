@@ -70,6 +70,11 @@ class Game:
         Carte = Item("Carte", "une carte mystérieuse", 0.1)
         Professeur1.inventory["Carte"] = Carte
 
+        Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
+        Professeur1.inventory["XP"] = Xp
+#Perosnnage dans le village de départ
+           # Historien = Character("Historien"," un historien ",Pilier1,["Bonjour je suis un historien et je suis la pour vous parler de ce pilier"])
+           # Historien.inventory["Historien"] = Historien
 
 
 

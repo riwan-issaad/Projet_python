@@ -25,7 +25,6 @@ class Character:
         self.description = description
         self.current_room = current_room
         self.msgs = msgs if msgs is not None else []
-        self.inventory = {}
 
         
     def __str__(self):

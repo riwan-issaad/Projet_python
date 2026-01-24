@@ -205,7 +205,7 @@ class Actions:
 
     def drop(game, list_of_words, number_of_parameters):
         """
-        Drop an item from the player's inventory into the current room.
+        Permet au joueur de reposer un objet dans la pièce actuelle.
         """
         l = len(list_of_words)
         if l != number_of_parameters + 1:
@@ -216,22 +216,15 @@ class Actions:
         player = game.player
         item_name = list_of_words[1]
 
-        # Vérifier que l'item est dans l'inventaire du joueur
-        if item_name not in player.inventory:
-            print(f"\nVous ne possédez pas '{item_name}'.")
+        if item_name in player.inventory:
+            item = player.inventory[item_name]
+            player.current_room.inventory[item_name] = item
+            del player.inventory[item_name]
+            print(f"Vous avez reposé {item.name}.")
+            return True
+        else:
+            print(f"L'objet '{item_name}' n'existe pas dans votre inventaire.")
             return False
-
-        # Récupérer l'item depuis l'inventaire du joueur
-        item = player.inventory[item_name]
-
-        # Retirer l'item de l'inventaire du joueur
-        del player.inventory[item_name]
-
-        # Ajouter l'item dans la pièce actuelle
-        player.current_room.inventory.append(item)
-
-        print(f"\nVous avez reposé {item.name}.")
-        return True
 
     def check(game, list_of_words, number_of_parameters):
         """
