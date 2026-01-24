@@ -73,8 +73,8 @@ class Game:
         Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
         Professeur1.inventory["XP"] = Xp
 #Perosnnage dans le village de départ
-           # Historien = Character("Historien"," un historien ",Pilier1,["Bonjour je suis un historien et je suis la pour vous parler de ce pilier"])
-           # Historien.inventory["Historien"] = Historien
+        Historien = Character("Historien"," un historien ",Pilier1,["Bonjour je suis un historien et je suis la pour vous parler de ce pilier"])
+        Professeur1.characters["Historien"] = Historien
 
 
 
@@ -181,13 +181,6 @@ class Game:
         self.player = Player(input("\nEntrez votre nom: "))
         self.player.current_room = Maison1
         self.player.history.append(self.player.current_room)
-        
-       # Exemple
-        forest = Room("Forest", "une forêt enchantée...")
-        gandalf = Character("Gandalf", "un magicien blanc", forest, ["Abracadabra !"])
-
-        # Ajouter le PNJ dans la pièce
-        forest.characters.append(gandalf)
 
     # Play the game
     def play(self):

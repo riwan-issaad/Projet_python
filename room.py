@@ -25,7 +25,7 @@ class Room:
         self.description = description
         self.exits = {}
         self.inventory = {}
-        self.characters = []
+        self.characters = {}
 
 
     # Define the get_exit method.
@@ -72,18 +72,28 @@ class Room:
     # Return a string describing the room inventory.
     def get_inventory(self):
         """
-        Returns a string describing the items contained in the room.
+        Returns a string describing the items and characters contained in the room.
 
         Returns:
             str: The inventory description.
         """
-        if len(self.inventory) == 0:
+        if len(self.inventory) == 0 and len(self.characters) == 0:
             return "Il n'y a rien ici."
 
-        inventory_string = "La pièce contient :\n"
+        inventory_string = "On voit:\n"
+        
+        # Afficher les items
         for item in self.inventory.values():
             inventory_string += (
                 f"    - {item.name} : {item.description} ({item.weight} kg)\n"
             )
+        
+        # Afficher les personnages (PNJ)
+        for character in self.characters.values():
+            inventory_string += (
+                f"    - {character.name} : {character.description}\n"
+            )
 
         return inventory_string
+
+

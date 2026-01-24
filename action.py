@@ -165,7 +165,16 @@ class Actions:
         
     def look(game, list_of_words, number_of_parameters):
         """
-        Display the description of the current room and the items present in it.
+        Affiche la description complète de la pièce actuelle,
+        incluant les objets et les personnages présents.
+
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
         """
         l = len(list_of_words)
         if l != number_of_parameters + 1:
@@ -174,7 +183,13 @@ class Actions:
             return False
 
         player = game.player
-        player.look()  # Appelle la méthode look() du joueur
+        
+        # Afficher la description de la pièce
+        print(player.current_room.get_long_description())
+        
+        # Afficher l'inventaire (items et personnages)
+        print(player.current_room.get_inventory())
+        
         return True
 
 
@@ -247,6 +262,7 @@ class Actions:
             print(f"    - {item}")
         print()
         return True
+
 
 
 
