@@ -54,22 +54,21 @@ class Game:
 #Village de départ
 
 
-        Maison1 = Room("Maison_du_joueur", "dans votre Maison.")
+        Maison1 = Room("Maison du Héros", "dans votre maison chaleureuse, où les souvenirs de l’enfance flottent encore")
         self.rooms.append(Maison1)
-        Professeur1 = Room("Maison_du_professeur ", "dans la maison du professeur")
+        Professeur1 = Room("Demeure du Professeur Eldor ", "dans la maison du professeur, remplie de parchemins et d’objets mystérieux")
         self.rooms.append(Professeur1)
-        Arène1 = Room("Arène du Souffle Naissant", "au sein de l’Arène du Souffle Naissant, là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme.")
+        Arène1 = Room("Arène du Souffle Naissant", "là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme")
         self.rooms.append(Arène1)
-        Pilier1 = Room("Le Pilier de l’Aube Perdue", "au sein du Pilier de l’Aube Perdue, chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier.")
+        Pilier1 = Room("Le Pilier de l’Aube Perdue", "chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier")
         self.rooms.append(Pilier1)
-        Boutique = Room("Boutique", "au sein de la boutique")
+        Boutique = Room("Boutique d’Alchimie de Liora", "étalée de fioles, herbes et objets magiques")
         self.rooms.append(Boutique)
 
         Maison1.exits = {"N": Pilier1, "E" : None, "S" : None, "O" : None}
         Professeur1.exits = {"N" : Arène1, "E" : None, "S" :Pilier1, "O" :None}
         Arène1.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
         Pilier1.exits = {"N" : None, "E" : Boutique , "S" : None, "O" : Professeur1}
-        #Pilier2.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
        
 #OBJET DANS VILLAGE DE DEPART
         Carte = Item("Carte", "une carte mystérieuse", 0.1)
@@ -106,8 +105,8 @@ class Game:
         #Maison_du_joueur_eau.exits = {"N": None, "E": None, "S": None, "O": None}
         #Maison_du_maitre_eau.exits = {"N": None, "E": None, "S": None, "O": None}
         #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-       # La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-       # Route1.exits = {"N": La_Source_des_Profondeurs , "E": None, "S": None, "O": None}
+        #La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+        #Pilier2.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
 
 
 ## Village Voltéria

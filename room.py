@@ -67,7 +67,7 @@ class Room:
         Returns:
             str: The long description of the room.
         """
-        return f"\nVous êtes dans {self.description}\n\n{self.get_exit_string()}\n"
+        return f"\nVous êtes {self.description}\n\n{self.get_exit_string()}\n"
 
     # Return a string describing the room inventory.
     def get_inventory(self):
