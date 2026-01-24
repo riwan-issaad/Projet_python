@@ -49,28 +49,33 @@ class Game:
 #Village de départ
 
 
-        Maison_du_joueur = Room("Maison_du_joueur", "dans votre Maison.")
-        self.rooms.append(Maison_du_joueur)
-        Maison_du_professeur = Room("Maison_du_professeur ", "dans la maison du professeur")
-        self.rooms.append(Maison_du_professeur)
-        Arène = Room("Arène du Souffle Naissant", "au sein de l’Arène du Souffle Naissant, là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme.")
-        self.rooms.append(Arène)
-        Pilier = Room("Le Pilier de l’Aube Perdue", "au sein du Pilier de l’Aube Perdue, chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier.")
-        self.rooms.append(Pilier)
-        Route1 = Room("Route1", "sur le chemin où la biodiversité est plus que développée et vous enmenera jusqu'à la prochaine arène.")
-        self.rooms.append(Route1)
+        Maison1 = Room("Maison_du_joueur", "dans votre Maison.")
+        self.rooms.append(Maison1)
+        Professeur1 = Room("Maison_du_professeur ", "dans la maison du professeur")
+        self.rooms.append(Professeur1)
+        Arène1 = Room("Arène du Souffle Naissant", "au sein de l’Arène du Souffle Naissant, là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme.")
+        self.rooms.append(Arène1)
+        Pilier1 = Room("Le Pilier de l’Aube Perdue", "au sein du Pilier de l’Aube Perdue, chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier.")
+        self.rooms.append(Pilier1)
+        Boutique = Room("Boutique", "au sein de la boutique")
+        self.rooms.append(Boutique)
 
-        Maison_du_joueur.exits = {"N": Pilier, "E" : None, "S" : None, "O" : None}
-        Maison_du_professeur.exits = {"N" : Arène, "E" : None, "S" :Pilier, "O" :None}
-        Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
-        Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
+        Maison1.exits = {"N": Pilier1, "E" : None, "S" : None, "O" : None}
+        Professeur1.exits = {"N" : Arène1, "E" : None, "S" :Pilier1, "O" :None}
+        Arène1.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
+        Pilier1.exits = {"N" : None, "E" : Boutique , "S" : None, "O" : Professeur1}
+        #Pilier2.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
        
-        # history_cmd = Command("history", " : afficher les lieux déjà visités", Actions.history, 0)
-        #self.commands["history"] = history_cmd
+#OBJET DANS VILLAGE DE DEPART
+        Carte = Item("Carte", "une carte mystérieuse", 0.1)
+        Professeur1.inventory["Carte"] = Carte
+
+
 
 
 # Village d'Eau
-
+        Pilier2 = Room("Pilier 2 "," le deuxieme pilier")
+        self.rooms.append(Pilier2)
 
         Maison_du_joueur_eau = Room("Maison_du_joueur ","dans votre maison bercée par le clapotis de l’eau.")
         self.rooms.append(Maison_du_joueur_eau)
@@ -169,7 +174,7 @@ class Game:
         # Setup player and starting room
 
         self.player = Player(input("\nEntrez votre nom: "))
-        self.player.current_room = Maison_du_joueur
+        self.player.current_room = Maison1
         self.player.history.append(self.player.current_room)
         
        # Exemple

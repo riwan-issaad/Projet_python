@@ -10,7 +10,8 @@ class Item:
 
 #Essaie 1(Exemple)
 
-#pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon",50)
-#print(pokeball)
+pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon",50)
+Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
+Carte = Item("Carte","une carte indiquant ou se trouve les pokemons",0.750)
 
 
