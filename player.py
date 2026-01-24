@@ -130,6 +130,12 @@ class Player():
         else:
             print(f"L'objet '{item_name}' n'existe pas dans cette pièce.")
 
+    def add_reward(self, reward):
+        """Ajoute une récompense au joueur."""
+        print(f"Vous avez reçu: {reward}")
+        if reward not in self.inventory:
+            self.inventory[reward] = reward
+
         
 
         

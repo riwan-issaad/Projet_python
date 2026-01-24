@@ -1,6 +1,7 @@
 # Description: Game class
 
 # Import modules
+from quest import Quest, QuestManager
 
 from room import Room
 from player import Player
