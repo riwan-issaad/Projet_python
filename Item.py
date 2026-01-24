@@ -10,7 +10,7 @@ class Item:
 
 #Essaie 1(Exemple)
 
-pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon",50)
-print(pokeball)
+#pokeball =Item("Pokeball","Objet permettant de capturer un Pokémon",50)
+#print(pokeball)
 
 

@@ -105,6 +105,14 @@ class Player():
         for item in self.inventory.values():
             inventory_string += f"    - {item.name} : {item.description} ({item.weight} kg)\n"
         return inventory_string
+    
+    def look(self):
+        """
+        Displays the description of the current room and its items.
+        """
+        print(self.current_room.get_long_description())
+        print(self.current_room.get_inventory())
+
         
 
         

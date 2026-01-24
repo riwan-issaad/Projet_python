@@ -59,9 +59,9 @@ class Actions:
         Orientations={"n": "N", "nord": "N","NORD":"N","Nord":"N","N":"N",
                       "e": "E", "est": "E","EST":"E","Est":"E","E":"E",
                       "s": "S", "sud": "S","SUD":"S","Sud":"S","S":"S",
-                      "O":"O","o": "O", "ouest": "O","Ouest":"O","OUEST":"O"
-                      "u":"U","up":"U","UP":"U":"Up":"U","U":"U"
-                      "d":"D","down":"D","DOWN":"D":"Down":"D","D":"D"}
+                      "O":"O","o": "O", "ouest": "O","Ouest":"O","OUEST":"O",
+                      "u": "U","up": "U","UP":"U","Up": "U","U": "U",
+                      "d": "D","down": "D","DOWN": "D", "Down": "D","D": "D"}
 
         if direction in Orientations:
              direction = Orientations[direction]
@@ -164,103 +164,96 @@ class Actions:
         return True
         
     def look(game, list_of_words, number_of_parameters):
-    """
-    Display the description of the current room and the items present in it.
+        """
+        Display the description of the current room and the items present in it.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
 
-    Args:
-        game (Game): The game object.
-        list_of_words (list): The list of words in the command.
-        number_of_parameters (int): The number of parameters expected by the command.
-
-    Returns:
-        bool: True if the command was executed successfully, False otherwise.
-    """
-    l = len(list_of_words)
-    if l != number_of_parameters + 1:
-        command_word = list_of_words[0]
-        print(MSG0.format(command_word=command_word))
-        return False
-
-    player = game.player
-    player.look()  # Appelle la méthode look() du joueur
-    return True
-
-def take(game, list_of_words, number_of_parameters):
-    """
-    Take an item from the current room and put it in the player's inventory.
-
-    Args:
-        game (Game): The game object.
-        list_of_words (list): The list of words in the command.
-        number_of_parameters (int): The number of parameters expected by the command.
-
-    Returns:
-        bool: True if the command was executed successfully, False otherwise.
-    """
-    l = len(list_of_words)
-    if l != number_of_parameters + 1:
-        command_word = list_of_words[0]
-        print(MSG1.format(command_word=command_word))
-        return False
-
-    player = game.player
-    item_name = list_of_words[1]
-
-    # Appelle la méthode take() du joueur
-    player.take(item_name)
-    return True
-
-def drop(game, list_of_words, number_of_parameters):
-    """
-    Drop an item from the player's inventory into the current room.
-    """
-    l = len(list_of_words)
-    if l != number_of_parameters + 1:
-        command_word = list_of_words[0]
-        print(MSG1.format(command_word=command_word))
-        return False
-
-    player = game.player
-    item_name = list_of_words[1]
-
-    # Vérifier que l'item est dans l'inventaire du joueur
-    if item_name not in player.inventory:
-        print(f"\nVous ne possédez pas '{item_name}'.")
-        return False
-
-    # Récupérer l'item depuis l'inventaire du joueur
-    item = player.inventory[item_name]
-
-    # Retirer l'item de l'inventaire du joueur
-    del player.inventory[item_name]
-
-    # Ajouter l'item dans la pièce actuelle
-    player.current_room.inventory.append(item)
-
-    print(f"\nVous avez reposé {item.name}.")
-    return True
-
-def check(game, list_of_words, number_of_parameters):
-    """
-    Display the items in the player's inventory.
-    """
-    l = len(list_of_words)
-    if l != number_of_parameters + 1:
-        command_word = list_of_words[0]
-        print(MSG0.format(command_word=command_word))
-        return False
-
-    inventory = game.player.inventory
-
-    if not inventory:
-        print("\nVotre inventaire est vide.\n")
+        player = game.player
+        player.look()  # Appelle la méthode look() du joueur
         return True
 
-    print("\nVotre inventaire contient :")
-    for item in inventory.values():
-        print(f"    - {item}")
-    print()
-    return True
+
+    def take(game, list_of_words, number_of_parameters):
+        """
+        Take an item from the current room and put it in the player's inventory.
+
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        player = game.player
+        item_name = list_of_words[1]
+
+        # Appelle la méthode take() du joueur
+        player.take(item_name)
+        return True
+
+    def drop(game, list_of_words, number_of_parameters):
+        """
+        Drop an item from the player's inventory into the current room.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+
+        player = game.player
+        item_name = list_of_words[1]
+
+        # Vérifier que l'item est dans l'inventaire du joueur
+        if item_name not in player.inventory:
+            print(f"\nVous ne possédez pas '{item_name}'.")
+            return False
+
+        # Récupérer l'item depuis l'inventaire du joueur
+        item = player.inventory[item_name]
+
+        # Retirer l'item de l'inventaire du joueur
+        del player.inventory[item_name]
+
+        # Ajouter l'item dans la pièce actuelle
+        player.current_room.inventory.append(item)
+
+        print(f"\nVous avez reposé {item.name}.")
+        return True
+
+    def check(game, list_of_words, number_of_parameters):
+        """
+        Display the items in the player's inventory.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG0.format(command_word=command_word))
+            return False
+
+        inventory = game.player.inventory
+
+        if not inventory:
+            print("\nVotre inventaire est vide.\n")
+            return True
+
+        print("\nVotre inventaire contient :")
+        for item in inventory.values():
+            print(f"    - {item}")
+        print()
+        return True
 
 
 

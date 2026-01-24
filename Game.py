@@ -34,13 +34,13 @@ class Game:
         self.commands["go"] = go
         back = Command("back"," : revenir en arrière", Actions.back, 0)
         self.commands["back"] = back
-        game.commands["look"] = Command("look","Permet d'observer la pièce.",Actions.look,0)
+        look = Command("look","Permet d'observer la pièce.",Actions.look,0)
         self.commands["look"]= look
-        game.commands["take"] = Command("take","Permet de prendre un item de la pièce.",Actions.take,1)
+        take = Command("take","Permet de prendre un item de la pièce.",Actions.take,1)
         self.commands["take"] = take
-        game.commands["drop"] = Command("drop","Permet de reposer un item dans la pièce.",Actions.drop,1)
+        drop = Command("drop","Permet de reposer un item dans la pièce.",Actions.drop,1)
         self.commands["drop"] = drop
-        game.commands["check"] = Command("check","Permet de vérifier le contenu de l'inventaire.",Actions.check,0)
+        check = Command("check","Permet de vérifier le contenu de l'inventaire.",Actions.check,0)
         self.commands["ckeck"] = check
 
        
@@ -88,11 +88,11 @@ class Game:
         self.rooms.append(Route2)
 
 
-        Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
-        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
-        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-        Route1.exits = {"N": La_Source_des_Profondeurs , "E": None, "S": None, "O": None}
+        #Maison_du_joueur_eau.exits = {"N": None, "E": None, "S": None, "O": None}
+        #Maison_du_maitre_eau.exits = {"N": None, "E": None, "S": None, "O": None}
+        #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
+       # La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+       # Route1.exits = {"N": La_Source_des_Profondeurs , "E": None, "S": None, "O": None}
 
 
 ## Village Voltéria
@@ -113,11 +113,11 @@ class Game:
         Route3 = Room("Route Orageuse","sur une route balayée par le vent et traversée d’arcs électriques.")
         self.rooms.append(Route3)
 
-        Maison_du_joueur_eau.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
-        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Le_Conducteur_Ancestral, "O": None}
-        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-        Route2.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+        #Maison_du_joueur_eau.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+        #Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Le_Conducteur_Ancestral, "O": None}
+       # Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
+       # Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+       # Route2.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
     
 
     #Village de la ligue de Pokémon(Finale)
@@ -140,11 +140,11 @@ class Game:
 
         #Route4 = Room("Voie du Jugement Orageux","sur la route menant à la Ligue, déchirée par des éclairs incessants, ""où chaque dresseur affronte ses peurs avant le combat final.")
         #self.rooms.append(Route4)
-        Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
-        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
-        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-        Route3.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
+        #Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
+        #Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
+        #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
+       # Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
+       # Route3.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
 
 
 
