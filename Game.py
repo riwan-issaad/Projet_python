@@ -22,7 +22,7 @@ class Game:
         self.rooms = []
         self.commands = {}
         self.player = None
-        self.quest_manager = None  # ← AJOUTER CECI
+        self.quest_manager = None
 
 
 
@@ -80,6 +80,7 @@ class Game:
 
         Xp = Item("XP","monnaie du jeu permettant d'achter des pokemon rare en boutique",1)
         Professeur1.inventory["XP"] = Xp
+
 #Perosnnage dans le village de départ
         Eldor = Character("Professeur Eldor", "un sage professeur au regard perçant.", Professeur1, ["Étudie bien ces sorts !"])
         Pilier_ancien = Character("Ancien du Pilier", "un vieil homme sage qui veille sur le Pilier.", Pilier1, ["Que la lumière t'accompagne, jeune voyageur."])
@@ -89,6 +90,8 @@ class Game:
         Professeur1.characters["Professeur Eldor"] = Eldor
         Pilier1.characters["Ancien du Pilier"] = Pilier_ancien
         Boutique.characters["Liora"] = Liora
+
+
 
 
 
@@ -118,31 +121,6 @@ class Game:
         #Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
         #La_Source_des_Profondeurs = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
         #Pilier2.exits = {"N" : None, "E" : None, "S" : None, "O" : None}
-
-
-## Village Voltéria
-
-
-        Maison_du_joueur_elec = Room("Maison de l’Étincelle","dans votre maison vibrante d’une énergie électrique constante.")
-        self.rooms.append(Maison_du_joueur_elec)
-
-        Maison_du_Maître_des_Courants= Room("Maison du Maître des Courants","dans la demeure du Maître, où l’air crépite d’électricité.")
-        self.rooms.append(Maison_du_Maître_des_Courants)
-
-        Arene_elec = Room("Arène de la Foudre Vive","au centre de l’Arène de la Foudre Vive, chaque affrontement fait jaillir des éclairs.")
-        self.rooms.append(Arene_elec)
-
-        Le_Conducteur_Ancestral= Room("Le Conducteur Ancestral","devant un pilier métallique captant la foudre depuis des générations.")
-        self.rooms.append(Le_Conducteur_Ancestral)
-
-        Route3 = Room("Route Orageuse","sur une route balayée par le vent et traversée d’arcs électriques.")
-        self.rooms.append(Route3)
-
-        #Maison_du_joueur_eau.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
-        #Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Le_Conducteur_Ancestral, "O": None}
-       # Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-       # Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-       # Route2.exits = {"N": Le_Conducteur_Ancestral, "E": None, "S": None, "O": None}
     
 
     #Village de la ligue de Pokémon(Finale)
@@ -289,6 +267,13 @@ class Game:
                 return True
         
         return False
+
+        #Quetes 
+        self.quest_manager = QuestManager(self.player)
+
+        quest1 = Quest("Cherche la réponse à l'énigme","",["Prendre les XP"],"100 XP")
+        self.quest_manager.add_quest(quest1)
+        self.quest_manager.activate_quest("Cherche la réponse à l'énigme")
 
         
 def main():
