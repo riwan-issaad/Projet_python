@@ -264,6 +264,38 @@ class Actions:
         return True
 
 
+    def talk(game, list_of_words, number_of_parameters):
+        """
+        Permet au joueur de parler avec un personnage non joueur.
+        
+        Args:
+            game (Game): The game object.
+            list_of_words (list): The list of words in the command.
+            number_of_parameters (int): The number of parameters expected by the command.
+        
+        Returns:
+            bool: True if the command was executed successfully, False otherwise.
+        """
+        l = len(list_of_words)
+        if l != number_of_parameters + 1:
+            command_word = list_of_words[0]
+            print(MSG1.format(command_word=command_word))
+            return False
+        
+        player = game.player
+        character_name = list_of_words[1]
+        
+        # Vérifier si le personnage est dans la pièce actuelle
+        if character_name in player.current_room.characters:
+            character = player.current_room.characters[character_name]
+            message = character.get_msg()
+            print(f"\n{character_name}: {message}\n")
+            return True
+        else:
+            print(f"\nLe personnage '{character_name}' n'est pas ici.\n")
+            return False
+
+
 
 
 

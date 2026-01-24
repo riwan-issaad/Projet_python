@@ -1,3 +1,5 @@
+import random
+
 # Define the Character class
 
 class Character:
@@ -36,3 +38,60 @@ class Character:
             str: A string in the format 'Name : description'.
         """
         return f"{self.name} : {self.description}"
+
+    def get_msg(self):
+        """
+        Retourne le prochain message du personnage de manière cyclique.
+        Les messages sont affichés dans l'ordre, puis recommencent depuis le début.
+        
+        Returns:
+            str: Le prochain message du personnage.
+        """
+        from Game import DEBUG
+        
+        if not self.msgs:
+            return f"{self.name} n'a rien à dire."
+        
+        # Récupérer et retirer le premier message de la liste
+        message = self.msgs.pop(0)
+        
+        # Remettre le message à la fin de la liste pour le prochain cycle
+        self.msgs.append(message)
+        
+        if DEBUG:
+            print(f"DEBUG: {self.name} dit: {message}")
+        
+        return message
+
+    def move(self):
+        """
+        Moves the character to an adjacent room with a 50% chance.
+        If the character moves, it goes to a random adjacent room.
+        
+        Returns:
+            bool: True if the character moved, False otherwise.
+        """
+        from Game import DEBUG
+        
+        if random.choice([True, False]):
+            # Récupérer les sorties disponibles (non None)
+            available_exits = [room for room in self.current_room.exits.values() if room is not None]
+            
+            # Si des sorties disponibles existent, choisir une au hasard
+            if available_exits:
+                # Retirer le personnage de la pièce actuelle
+                if self.name in self.current_room.characters:
+                    del self.current_room.characters[self.name]
+                
+                # Se déplacer vers la nouvelle pièce
+                self.current_room = random.choice(available_exits)
+                
+                # Ajouter le personnage à la nouvelle pièce
+                self.current_room.characters[self.name] = self
+                
+                if DEBUG:
+                    print(f"DEBUG: {self.name} s'est déplacé vers {self.current_room.name}")
+                
+                return True
+        
+        return False

@@ -10,6 +10,9 @@ from Item import Item
 from character import Character
 
 
+# Variable de débogage
+DEBUG = False
+
 class Game:
 
     # Constructor
@@ -42,6 +45,8 @@ class Game:
         self.commands["drop"] = drop
         check = Command("check","Permet de vérifier le contenu de l'inventaire.",Actions.check,0)
         self.commands["ckeck"] = check
+        talk = Command("talk", " <someone> : parler avec un personnage", Actions.talk, 1)
+        self.commands["talk"] = talk
 
        
 #Setup Room
@@ -188,6 +193,10 @@ class Game:
         self.print_welcome()
         # Loop until the game is finished
         while not self.finished:
+            for room in self.rooms:
+                for character in list(room.characters.values()):
+                    character.move()
+
             # Get the command from the player
             self.process_command(input("> "))
         return None
