@@ -65,12 +65,11 @@ class Character:
 
     def move(self):
         """
-        Moves the character to an adjacent room with a 50% chance.
-        If the character moves, it goes to a random adjacent room.
-        
-        Returns:
-            bool: True if the character moved, False otherwise.
+        Le personnage se déplace aléatoirement dans une salle voisine.
+        DÉSACTIVÉ pour que les personnages restent à leur place.
         """
+        # Les personnages ne se déplacent plus - ils restent dans leur salle initiale
+        pass
         from Game import DEBUG
         
         if random.choice([True, False]):
