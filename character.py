@@ -1,4 +1,5 @@
-import random
+"""Character module for the game."""
+
 
 class Character:
     def __init__(self, name, description, current_room=None, msgs=None):
@@ -14,7 +15,7 @@ class Character:
     def get_msg(self):
         if not self.msgs:
             return f"{self.name} n'a rien à dire."
-        
+
         # Récupérer et faire tourner les messages
         message = self.msgs.pop(0)
         self.msgs.append(message)

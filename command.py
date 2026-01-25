@@ -2,7 +2,10 @@
 
 class Command:
     """
-    This class represents a command. A command is composed of a command word, a help string, an action and a number of parameters.
+    This class represents a command.
+
+    A command is composed of a command word, a help string,
+    an action and a number of parameters.
 
     Attributes:
         command_word (str): The command word.
@@ -35,8 +38,6 @@ class Command:
         self.help_string = help_string
         self.action = action
         self.number_of_parameters = number_of_parameters
-   
-    # The string representation of the command.
+
     def __str__(self):
-        return  self.command_word \
-                + self.help_string
+        return self.command_word + self.help_string

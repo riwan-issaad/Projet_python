@@ -37,10 +37,9 @@ class Room:
         Returns:
             Room or None: The room in that direction if it exists, otherwise None.
         """
-        if direction in self.exits.keys():
+        if direction in self.exits:
             return self.exits[direction]
-        else:
-            return None
+        return None
 
     # Return a string describing the room's exits.
     def get_exit_string(self):
@@ -51,9 +50,9 @@ class Room:
             str: A string describing the exits.
         """
         exit_string = "Sorties: "
-        for exit in self.exits.keys():
-            if self.exits.get(exit) is not None:
-                exit_string += exit + ", "
+        for exit_dir in self.exits:
+            if self.exits.get(exit_dir) is not None:
+                exit_string += exit_dir + ", "
         return exit_string.strip(", ")
 
     def get_long_description(self):
@@ -77,13 +76,13 @@ class Room:
             return "Il n'y a rien ici."
 
         inventory_string = "On voit:\n"
-        
+
         # Afficher les items
         for item in self.inventory.values():
             inventory_string += (
                 f"    - {item.name} : {item.description} ({item.weight} kg)\n"
             )
-        
+
         # Afficher les personnages (PNJ)
         for character in self.characters.values():
             inventory_string += (
@@ -91,5 +90,3 @@ class Room:
             )
 
         return inventory_string
-
-
