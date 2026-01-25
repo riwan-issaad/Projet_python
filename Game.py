@@ -11,56 +11,51 @@ from item import Item
 from character import Character
 from quest import Quest, QuestManager
 
-# --- 1. CLASSE _StdoutRedirector (Celle du prof) ---
 class _StdoutRedirector:
     def __init__(self, text_widget):
         self.text_widget = text_widget
 
     def write(self, string):
-        self.text_widget.insert('end', string)
-        self.text_widget.see('end')
+        self.text_widget.insert(tk.END, string)
+        self.text_widget.see(tk.END)
 
     def flush(self):
         pass
 
-# --- 2. CLASSE GameGUI (Version standard) ---
 class GameGUI:
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()
-        self.root.title("Jeu d'Aventure")
-        self.root.geometry("600x400") # Taille standard
-
-        # Zone de texte (ScrolledText)
-        self.text_area = scrolledtext.ScrolledText(self.root, state='normal', wrap='word')
-        self.text_area.pack(expand=True, fill='both', padx=10, pady=10)
+        self.root.title("Pokémon : L'Aventure Étendue")
+        self.root.geometry("800x600")
+        self.custom_font = font.Font(family="Courier", size=11)
         
-        # Redirection des print() vers la zone de texte
+        self.text_area = scrolledtext.ScrolledText(self.root, state='normal', wrap='word', font=self.custom_font)
+        self.text_area.pack(expand=True, fill='both', padx=10, pady=10)
         sys.stdout = _StdoutRedirector(self.text_area)
 
-        # Zone de saisie (Entry)
         self.entry_var = tk.StringVar()
-        self.entry = tk.Entry(self.root, textvariable=self.entry_var)
+        self.entry = tk.Entry(self.root, textvariable=self.entry_var, font=self.custom_font)
         self.entry.pack(fill='x', padx=10, pady=5)
-        
-        # Validation avec la touche Entrée
         self.entry.bind("<Return>", self.process_input)
         self.entry.focus_set()
+
+        self.btn = tk.Button(self.root, text="Envoyer", command=self.process_input)
+        self.btn.pack(pady=5)
+        self.game.print_welcome()
 
     def process_input(self, event=None):
         user_input = self.entry_var.get()
         if user_input.strip():
-            print(f"\n> {user_input}") # Affiche la commande
+            print(f"\n> {user_input}") 
             self.game.process_command(user_input)
-            self.entry_var.set("") # Vide le champ
-            
+            self.entry_var.set("")
             if self.game.finished:
                 self.root.after(3000, self.root.destroy)
 
     def start(self):
         self.root.mainloop()
 
-# --- 3. CLASSE GAME ---
 class Game:
     def __init__(self):
         self.finished = False
@@ -70,7 +65,7 @@ class Game:
         self.quest_manager = None
 
     def setup(self):
-        # Configuration des commandes
+        # Commandes
         self.commands["help"] = Command("help", " : aide", Actions.help, 0)
         self.commands["quit"] = Command("quit", " : quitter", Actions.quit, 0)
         self.commands["go"] = Command("go", " <dir> : bouger (N, E, S, O, U, D)", Actions.go, 1)
@@ -84,74 +79,136 @@ class Game:
         self.commands["capture"] = Command("capture", " <nom> : capturer", Actions.capture, 1)
         self.commands["map"] = Command("map", " : carte", Actions.map, 0)
 
-        # --- CARTE (Avec exigence Monter/Descendre) ---
-        
+        # --- CREATION DE LA CARTE AGRANDIE ---
+
+        # Zone 1 : Départ
         Maison = Room("Maison du Héros", "dans ta chambre.")
         Place = Room("Place du Village", "au centre du village.")
         Labo = Room("Labo de Chen", "dans le laboratoire.")
-        Boutique = Room("Boutique", "dans le magasin.")
-        Route1 = Room("Route 1", "au pied de la montagne.")
-        
-        # Niveau Bas (Down)
+        Boutique = Room("Boutique", "dans le magasin général. Une clé brille sur le comptoir.")
+        Route1 = Room("Route 1", "au pied de la montagne. Une barrière bloque le chemin montant.")
         Grotte = Room("Grotte Souterraine", "dans une grotte sombre (Niveau -1).")
-        # Niveau Haut (Up)
-        Sommet = Room("Sommet de l'Arène", "tout en haut de la montagne (Niveau +1).")
 
-        self.rooms.extend([Maison, Place, Labo, Boutique, Route1, Grotte, Sommet])
+        # Zone 2 : Extension (Après la barrière)
+        Route2 = Room("Route 2", "sur un chemin escarpé en altitude.")
+        Village2 = Room("Village Céleste", "dans un petit village perdu dans les nuages.")
+        Sommet = Room("Sommet de l'Arène", "tout en haut, devant le Champion (FIN).")
 
-        # Connexions
+        self.rooms.extend([Maison, Place, Labo, Boutique, Route1, Grotte, Route2, Village2, Sommet])
+
+        # --- CONNEXIONS ---
+
+        # Zone 1
         Maison.exits = {"N": Place}
         Place.exits = {"S": Maison, "E": Boutique, "O": Labo, "N": Route1}
         Labo.exits = {"E": Place}
         Boutique.exits = {"O": Place}
         
-        # Le carrefour 3D (Route 1)
-        Route1.exits = {"S": Place, "U": Sommet, "D": Grotte}
-        Grotte.exits = {"U": Route1} # On remonte
-        Sommet.exits = {"D": Route1} # On redescend
+        # Route 1 (Le carrefour)
+        Route1.exits = {"S": Place, "D": Grotte, "U": Route2} # U vers Route 2 (Bloqué par Clé dans action.py)
+        Grotte.exits = {"U": Route1}
 
-        # Objets
+        # Zone 2 (Haut)
+        Route2.exits = {"D": Route1, "U": Village2} # On monte encore
+        Village2.exits = {"D": Route2, "U": Sommet} # On monte vers la fin
+        Sommet.exits = {"D": Village2}
+
+        # --- OBJETS ---
+
+        # Maison
         Pokeball = Item("Pokeball", "Pour capturer !", 0.1)
         Maison.inventory["Pokeball"] = Pokeball
-        
-        Rattata = Item("Rattata", "Un petit Pokémon violet.", 0.5)
-        Grotte.inventory["rattata"] = Rattata # Caché dans la grotte !
-
         Colis = Item("Colis", "Le paquet pour Chen.", 1.0)
         Maison.inventory["colis"] = Colis 
 
-        # Personnages
+        # Boutique : LA CLÉ (Indispensable pour continuer)
+        Cle = Item("Cle", "La clé de la barrière Route 2.", 0.1)
+        Boutique.inventory["cle"] = Cle # Clé en minuscule pour le code
+
+        # Grotte : RATTATA
+        Rattata = Item("Rattata", "Un petit Pokémon violet.", 0.5)
+        Grotte.inventory["rattata"] = Rattata 
+
+        # Sommet
+        Badge = Item("Badge", "Le Badge Roche.", 0.1)
+        Sommet.inventory["Badge"] = Badge
+
+        # --- PERSONNAGES ---
         Chen = Character("Chen", "Le Professeur.", Labo, ["Bonjour !", "J'attends mon colis."])
         Labo.characters["Chen"] = Chen
         
-        Maman = Character("Maman", "Ta mère.", Maison, ["Fais attention dans la Grotte !"])
-        Maison.characters["Maman"] = Maman
-        
-        Champion = Character("Pierre", "Champion d'Arène.", Sommet, ["Prouve ta valeur !"])
+        Vendeur = Character("Vendeur", "Le gérant.", Boutique, ["Cette clé ouvre la Route 2.", "Elle coûte 0$, profite !"])
+        Boutique.characters["Vendeur"] = Vendeur
+
+        Champion = Character("Pierre", "Champion d'Arène.", Sommet, ["Te voilà enfin au sommet !"])
         Sommet.characters["Pierre"] = Champion
 
-        # Joueur & Quêtes
-        # name = input("\nEntrez votre nom: ") # En GUI, input() bloque tout.
+        # --- JOUEUR & QUÊTES ---
         self.player = Player("Sacha") 
         self.player.current_room = Maison
         self.player.history.append(Maison)
 
         self.quest_manager = QuestManager(self.player)
+        
+        # Quête 1 : Colis
         self.quest_manager.add_quest(Quest("Livraison", "Apporte le colis à Chen.", ["prendre colis", "parler avec Chen"], "Pokédex"))
         self.quest_manager.activate_quest("Livraison")
-        self.quest_manager.add_quest(Quest("Sommet", "Grimpe au Sommet.", ["Visiter Sommet de l'Arène"], "Potion Max"))
-        self.quest_manager.activate_quest("Sommet")
+        
+        # Quête 2 : Rattata (NOUVEAU)
+        # L'objectif est "capture rattata"
+        self.quest_manager.add_quest(Quest("Chasse au Rattata", "Trouve un Rattata dans la Grotte et capture-le.", ["capture rattata"], "Super Potion"))
+        self.quest_manager.activate_quest("Chasse au Rattata")
+
+        # Quête 3 : Sommet (Mise à jour)
+        self.quest_manager.add_quest(Quest("Vers le Sommet", "Traverse la Route 2 et grimpe tout en haut.", ["Visiter Sommet de l'Arène"], "Victoire"))
+        self.quest_manager.activate_quest("Vers le Sommet")
 
     def play(self):
         self.setup()
-        self.print_welcome()
-        
-        # Lancement de l'interface
-        # Note : Je garde le try/except car sur Codespaces (Cloud), 
-        # lancer Tkinter sans écran fait planter le script immédiatement.
-        # Cela permet au prof de voir la GUI, et à toi de tester sans crash.
         try:
             self.gui = GameGUI(self)
             self.gui.start()
         except tk.TclError:
-            print("\n⚠️  Pas d'écran détecté (Mode Cloud).
+            print("\n⚠️  Pas d'écran détecté (Mode Cloud).\n")
+            self.print_welcome()
+            while not self.finished:
+                self.check_victory_defeat()
+                try:
+                    user_input = input("> ")
+                    self.process_command(user_input)
+                except (KeyboardInterrupt, EOFError):
+                    self.finished = True
+                    print("\nAu revoir !")
+    
+    def check_victory_defeat(self):
+        if self.win():
+            print("\n🏆 VICTOIRE ! Tu as atteint le sommet et fini les quêtes ! 🏆")
+            self.finished = True
+
+    def process_command(self, command_string):
+        if not command_string: return
+        list_of_words = command_string.split(" ")
+        command_word = list_of_words[0]
+
+        if command_word not in self.commands:
+            print(f"\nCommande '{command_word}' inconnue. Tapez 'help'.\n")
+        else:
+            command = self.commands[command_word]
+            command.action(self, list_of_words, command.number_of_parameters)
+            self.check_victory_defeat()
+
+    def print_welcome(self):
+        print(f"\nBienvenue {self.player.name} !")
+        print("Entrez 'help' pour l'aide.")
+        self.player.look()
+
+    def win(self):
+        if self.quest_manager is None: return False
+        all_quests = self.quest_manager.get_all_quests()
+        if not all_quests: return False
+        for quest in all_quests:
+            if not quest.is_completed: return False
+        return True
+
+if __name__ == "__main__":
+    Game().play()

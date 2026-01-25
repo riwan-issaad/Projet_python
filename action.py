@@ -11,7 +11,6 @@ class Actions:
             return False
 
         direction = list_of_words[1]
-        # Dictionnaire robuste majuscules/minuscules
         Orientations = {"n": "N", "nord": "N", "NORD": "N", "N": "N",
                         "e": "E", "est": "E", "EST": "E", "E": "E",
                         "s": "S", "sud": "S", "SUD": "S", "S": "S",
@@ -23,6 +22,16 @@ class Actions:
         else:
             print("Direction inconnue.")
             return False
+
+        # --- MECANIQUE DE LA CLÉ (NOUVEAU) ---
+        # Si le joueur est sur la Route 1 et veut monter (U) vers la Route 2
+        if player.current_room.name == "Route 1" and direction == "U":
+            if "cle" not in player.inventory:
+                print("\n⛔ STOP ! Le chemin vers la Route 2 est fermé par une barrière.")
+                print("Il vous faut la 'Cle' pour passer (Indice : Cherchez à la Boutique).\n")
+                return False
+            else:
+                print("\n🔓 Vous utilisez la Clé pour ouvrir la barrière !")
             
         player.move(direction)
         if game.quest_manager:
@@ -56,7 +65,7 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
         
-        item_name = list_of_words[1] # On garde la casse d'origine pour matcher les clés du dictionnaire
+        item_name = list_of_words[1]
         if game.player.take(item_name):
             if game.quest_manager:
                 game.quest_manager.check_action_objectives("prendre", item_name)
@@ -86,10 +95,7 @@ class Actions:
         character_name = list_of_words[1]
         if game.player.talk(character_name):
             if game.quest_manager:
-                # On valide l'objectif de quête
-                # Le format attendu par quest.py est "parler avec X" ou "parler X"
                 game.quest_manager.check_action_objectives("parler", character_name)
-                # On force aussi la validation spécifique si besoin
                 game.quest_manager.complete_objective(f"Parler à {character_name}")
         return True
 
@@ -105,24 +111,31 @@ class Actions:
             print(MSG1.format(command_word=command_word))
             return False
         
-        pokemon_name = list_of_words[1] # Pas de lower() ici pour matcher les clés du dictionnaire comme "Rattata"
-        game.player.capture(pokemon_name)
+        pokemon_name = list_of_words[1]
+        if game.player.capture(pokemon_name):
+             if game.quest_manager:
+                # On valide l'objectif de quête "capture rattata"
+                game.quest_manager.check_action_objectives("capture", pokemon_name)
         return True
     
     def map(game, list_of_words, number_of_parameters):
+        # Nouvelle Carte Agrandie
         carte = """
-                       [ Sommet Arène ]
+                       [ Sommet Arène ] (FIN)
                              ^
                              | (UP)
-                             |
+                       [ Village 2 ]
+                             ^
+                             | (UP)
+                       [ Route 2 ]
+                             ^
+                             | (UP - Il faut la Clé !)
                        [ Route 1 ]  ----> (DOWN) ----> [ Grotte ]
                              |
                              | (N)
-                             |
       [ Labo ] <---(O)--- [ Place ] ---(E)---> [ Boutique ]
                              |
                              | (S)
-                             |
                         [ Maison ]
         """
         print(carte)
