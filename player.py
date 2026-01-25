@@ -8,10 +8,13 @@ class Player():
         self.inventory = {} 
 
     def move(self, direction):
+        # Sécurité : on utilise .get() pour éviter le crash si la direction n'existe pas
         next_room = self.current_room.exits.get(direction)
+
         if next_room is None:
             print("\nAucune porte dans cette direction !\n")
             return False
+        
         self.history.append(self.current_room)
         self.current_room = next_room
         print(self.current_room.get_long_description())
@@ -33,87 +36,72 @@ class Player():
 
     def look(self):
         print(self.current_room.get_long_description())
-        if self.current_room.inventory:
-            print("Objets visibles :")
-            for item in self.current_room.inventory.values():
-                print(f"    - {item}")
-        if self.current_room.characters:
-            print("Personnages présents :")
-            for char in self.current_room.characters:
-                print(f"    - {char}")
+        print(self.current_room.get_inventory())
 
     def take(self, item_name):
         if item_name in self.current_room.inventory:
             item = self.current_room.inventory.pop(item_name)
             self.inventory[item_name] = item
-            print(f"\nVous avez ramassé : {item_name}")
+            print(f"Vous avez pris {item.name}.")
             return True
         else:
-            print(f"\nIl n'y a pas de '{item_name}' ici.")
+            print(f"L'objet '{item_name}' n'existe pas ici.")
             return False
 
     def drop(self, item_name):
         if item_name in self.inventory:
             item = self.inventory.pop(item_name)
             self.current_room.inventory[item_name] = item
-            print(f"\nVous avez posé : {item_name}")
+            print(f"Vous avez posé {item.name}.")
             return True
         else:
-            print(f"\nVous n'avez pas de '{item_name}' dans votre sac.")
+            print(f"Vous n'avez pas de '{item_name}'.")
             return False
 
     def get_inventory(self):
         if not self.inventory:
-            print("\nVotre sac est vide.")
+            print("Votre inventaire est vide.")
             return
-        print("\nContenu de votre sac :")
+        
+        print("Vous disposez des items suivants :")
         for item in self.inventory.values():
-            print(f"    - {item}")
+            print(f"    - {item.name} : {item.description} ({item.weight} kg)")
 
     def talk(self, name):
-        found_char = None
-        for char in self.current_room.characters:
-            if char.name == name:
-                found_char = char
-                break
-        
-        if not found_char:
+        if name in self.current_room.characters:
+            character = self.current_room.characters[name]
+            print(f"\n{name}: {character.get_msg()}\n")
+            return True
+        else:
             print(f"\nIl n'y a pas de '{name}' ici.")
             return False
 
-        if found_char.name == "Chen":
-            if "colis" in self.inventory:
-                print("\nChen : Oh ! Tu as rapporté mon Colis ! Merci.")
-                print("Chen : Tiens, voici ton Pokédex !")
-                del self.inventory["colis"]
-                return True
-
-        print(f"\n{found_char.name}: {found_char.get_msg()}")
-        return True
-
     def add_reward(self, reward):
-        print(f"✨ Vous avez reçu : {reward} !")
-        item_recompense = Item(reward, f"Récompense obtenue.")
-        self.inventory[reward.lower()] = item_recompense
+        print(f"✨ Récompense reçue : {reward}")
+        # On crée un item fictif pour la récompense
+        if reward not in self.inventory:
+            self.inventory[reward] = Item(reward, "Récompense de quête", 0)
 
-    # --- FONCTION CAPTURE (ESSENTIELLE) ---
     def capture(self, pokemon_name):
         # Vérifie la pokeball (en minuscule !)
-        if "pokeball" not in self.inventory:
+        # Note : Dans ton setup game.py, tu as mis "Pokeball" avec majuscule dans l'inventaire
+        # On va gérer les deux cas pour être sûr
+        has_ball = "pokeball" in self.inventory or "Pokeball" in self.inventory
+        
+        if not has_ball:
             print("\n❌ Vous n'avez pas de Pokéball !")
             return False
 
-        # Vérifie le pokemon
         if pokemon_name in self.current_room.inventory:
             pokemon = self.current_room.inventory.pop(pokemon_name)
             print(f"\n🔴 Vous lancez une Pokéball sur {pokemon.name}...")
             print("...")
             print(f"✨ C'est attrapé ! {pokemon.name} est dans votre équipe !")
             
-            # Retire la pokeball
-            del self.inventory["pokeball"]
+            # Retire la pokeball (on cherche la bonne clé)
+            if "pokeball" in self.inventory: del self.inventory["pokeball"]
+            elif "Pokeball" in self.inventory: del self.inventory["Pokeball"]
             
-            # Ajoute le pokémon
             self.inventory[pokemon_name] = pokemon
             return True
         else:

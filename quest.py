@@ -737,3 +737,12 @@ class QuestManager:
             print(quest.get_details(current_counts))
         else:
             print(f"\nQuête '{quest_title}' non trouvée.\n")
+
+    def get_quest(self, quest_name):
+        """
+        Récupère une quête par son nom.
+        """
+        for quest in self.quests:
+            if quest.title == quest_name:
+                return quest
+        return None

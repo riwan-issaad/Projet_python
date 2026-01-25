@@ -6,11 +6,12 @@ import sys
 from room import Room
 from player import Player
 from command import Command
-from action import Actions  
-from item import Item       
+from action import Actions
+from item import Item
 from character import Character
 from quest import Quest, QuestManager
 
+# --- 1. CLASSE _StdoutRedirector (Celle du prof) ---
 class _StdoutRedirector:
     def __init__(self, text_widget):
         self.text_widget = text_widget
@@ -22,41 +23,44 @@ class _StdoutRedirector:
     def flush(self):
         pass
 
+# --- 2. CLASSE GameGUI (Version standard) ---
 class GameGUI:
     def __init__(self, game):
         self.game = game
         self.root = tk.Tk()
-        self.root.title("Pokémon : L'Aventure Textuelle")
-        self.root.geometry("800x600")
+        self.root.title("Jeu d'Aventure")
+        self.root.geometry("600x400") # Taille standard
 
-        self.custom_font = font.Font(family="Courier", size=12)
-        
-        self.text_area = scrolledtext.ScrolledText(self.root, state='normal', wrap='word', font=self.custom_font)
+        # Zone de texte (ScrolledText)
+        self.text_area = scrolledtext.ScrolledText(self.root, state='normal', wrap='word')
         self.text_area.pack(expand=True, fill='both', padx=10, pady=10)
         
+        # Redirection des print() vers la zone de texte
         sys.stdout = _StdoutRedirector(self.text_area)
 
+        # Zone de saisie (Entry)
         self.entry_var = tk.StringVar()
-        self.entry = tk.Entry(self.root, textvariable=self.entry_var, font=self.custom_font)
+        self.entry = tk.Entry(self.root, textvariable=self.entry_var)
         self.entry.pack(fill='x', padx=10, pady=5)
+        
+        # Validation avec la touche Entrée
         self.entry.bind("<Return>", self.process_input)
         self.entry.focus_set()
-
-        self.submit_button = tk.Button(self.root, text="Envoyer", command=self.process_input)
-        self.submit_button.pack(pady=5)
 
     def process_input(self, event=None):
         user_input = self.entry_var.get()
         if user_input.strip():
-            print(f"\n> {user_input}") 
+            print(f"\n> {user_input}") # Affiche la commande
             self.game.process_command(user_input)
-            self.entry_var.set("")
+            self.entry_var.set("") # Vide le champ
+            
             if self.game.finished:
                 self.root.after(3000, self.root.destroy)
 
     def start(self):
         self.root.mainloop()
 
+# --- 3. CLASSE GAME ---
 class Game:
     def __init__(self):
         self.finished = False
@@ -66,136 +70,88 @@ class Game:
         self.quest_manager = None
 
     def setup(self):
-        # ... (Garde tes commandes help, quit, go, take, capture... au début) ...
-        # ... (Ne touche pas aux commandes, modifie juste à partir de "2. Setup rooms") ...
+        # Configuration des commandes
+        self.commands["help"] = Command("help", " : aide", Actions.help, 0)
+        self.commands["quit"] = Command("quit", " : quitter", Actions.quit, 0)
+        self.commands["go"] = Command("go", " <dir> : bouger (N, E, S, O, U, D)", Actions.go, 1)
+        self.commands["back"] = Command("back", " : retour", Actions.back, 0)
+        self.commands["look"] = Command("look", " : observer", Actions.look, 0)
+        self.commands["take"] = Command("take", " <item> : prendre", Actions.take, 1)
+        self.commands["drop"] = Command("drop", " <item> : poser", Actions.drop, 1)
+        self.commands["sac"] = Command("sac", " : inventaire", Actions.check, 0)
+        self.commands["talk"] = Command("talk", " <nom> : parler", Actions.talk, 1)
+        self.commands["quests"] = Command("quests", " : quêtes", Actions.quests, 0)
+        self.commands["capture"] = Command("capture", " <nom> : capturer", Actions.capture, 1)
+        self.commands["map"] = Command("map", " : carte", Actions.map, 0)
 
-        # 2. Setup rooms (Configuration de la Carte)
-        # ------------------------------------------
-
-        # Création des lieux
-        maison = Room("Maison", "dans ta chambre. C'est ici que tout commence.")
-        place = Room("Place du Village", "sur la place principale de Bourg-Palette.")
-        labo = Room("Labo de Chen", "dans le laboratoire rempli de livres et de machines.")
-        route1 = Room("Route 1", "sur un chemin de terre entouré de hautes herbes.")
-        arene = Room("Arène", "devant l'imposante Arène du Champion.")
+        # --- CARTE (Avec exigence Monter/Descendre) ---
         
-        # On ajoute les salles au jeu
-        self.rooms.extend([maison, place, labo, route1, arene])
-
-        # Connexions (Définition des sorties)
-        # Maison <-> Place
-        maison.exits = {"N": place}
-        place.exits = {"S": maison, "E": labo, "N": route1}
+        Maison = Room("Maison du Héros", "dans ta chambre.")
+        Place = Room("Place du Village", "au centre du village.")
+        Labo = Room("Labo de Chen", "dans le laboratoire.")
+        Boutique = Room("Boutique", "dans le magasin.")
+        Route1 = Room("Route 1", "au pied de la montagne.")
         
-        # Place <-> Labo
-        labo.exits = {"O": place}
+        # Niveau Bas (Down)
+        Grotte = Room("Grotte Souterraine", "dans une grotte sombre (Niveau -1).")
+        # Niveau Haut (Up)
+        Sommet = Room("Sommet de l'Arène", "tout en haut de la montagne (Niveau +1).")
+
+        self.rooms.extend([Maison, Place, Labo, Boutique, Route1, Grotte, Sommet])
+
+        # Connexions
+        Maison.exits = {"N": Place}
+        Place.exits = {"S": Maison, "E": Boutique, "O": Labo, "N": Route1}
+        Labo.exits = {"E": Place}
+        Boutique.exits = {"O": Place}
         
-        # Place <-> Route 1
-        route1.exits = {"S": place, "N": arene}
+        # Le carrefour 3D (Route 1)
+        Route1.exits = {"S": Place, "U": Sommet, "D": Grotte}
+        Grotte.exits = {"U": Route1} # On remonte
+        Sommet.exits = {"D": Route1} # On redescend
+
+        # Objets
+        Pokeball = Item("Pokeball", "Pour capturer !", 0.1)
+        Maison.inventory["Pokeball"] = Pokeball
         
-        # Route 1 <-> Arène
-        arene.exits = {"S": route1}
+        Rattata = Item("Rattata", "Un petit Pokémon violet.", 0.5)
+        Grotte.inventory["rattata"] = Rattata # Caché dans la grotte !
 
+        Colis = Item("Colis", "Le paquet pour Chen.", 1.0)
+        Maison.inventory["colis"] = Colis 
 
-        # 3. Setup Items (Les Objets)
-        # ---------------------------
+        # Personnages
+        Chen = Character("Chen", "Le Professeur.", Labo, ["Bonjour !", "J'attends mon colis."])
+        Labo.characters["Chen"] = Chen
         
-        # Maison : Pokéball + Potion
-        pokeball = Item("Pokeball", "Une balle rouge et blanche.")
-        maison.inventory["pokeball"] = pokeball
+        Maman = Character("Maman", "Ta mère.", Maison, ["Fais attention dans la Grotte !"])
+        Maison.characters["Maman"] = Maman
         
-        potion = Item("Potion", "Un spray pour soigner les blessures.")
-        maison.inventory["potion"] = potion
+        Champion = Character("Pierre", "Champion d'Arène.", Sommet, ["Prouve ta valeur !"])
+        Sommet.characters["Pierre"] = Champion
 
-        # Labo : Colis (Objet de quête)
-        # Note : On met le colis au Labo pour l'exemple, ou à la Boutique si tu en crées une.
-        # Disons que Chen l'a oublié sur son bureau pour l'instant, ou qu'il faut le chercher ailleurs.
-        # Pour ta quête actuelle, mettons le colis dans la "Maison" pour que ce soit facile :
-        colis = Item("Colis", "Le paquet pour le Professeur.")
-        maison.inventory["colis"] = colis
-
-
-        # 4. Setup Characters & Pokémon (PNJ et Sauvages)
-        # -----------------------------------------------
-        
-        # Maman est à la maison
-        maman = Character("Maman", "Ta mère", maison, ["Coucou mon chéri !", "N'oublie pas ta casquette."])
-        maison.characters.append(maman)
-        
-        # Chen est au Labo
-        chen = Character("Chen", "Le Professeur Pokémon", labo, ["Bonjour !", "Ah, tu as mon colis ?"])
-        labo.characters.append(chen)
-
-        # Rattata est sur la Route 1 (En tant qu'Item pour la capture)
-        rattata = Item("Rattata", "Un Pokémon sauvage violet.")
-        route1.inventory["rattata"] = rattata
-
-
-        # 5. Setup Player & Quests
-        # ------------------------
-        name = input("\nEntrez votre nom: ")
-        self.player = Player(name)
-        self.player.current_room = maison  # On commence dans la maison
+        # Joueur & Quêtes
+        # name = input("\nEntrez votre nom: ") # En GUI, input() bloque tout.
+        self.player = Player("Sacha") 
+        self.player.current_room = Maison
+        self.player.history.append(Maison)
 
         self.quest_manager = QuestManager(self.player)
-        
-        # Quête 1 : Le Colis
-        # Attention : Les objectifs doivent correspondre à tes actions !
-        quest_colis = Quest(
-            "Livraison Express", 
-            "Prends le colis chez toi et apporte-le à Chen au Labo.",
-            ["prendre colis", "parler avec Chen"], 
-            "Pokédex"
-        )
-        self.quest_manager.add_quest(quest_colis)
-        self.quest_manager.activate_quest("Livraison Express")
-        
-        # Quête 2 : L'Arène
-        quest_arene = Quest(
-            "Vers le sommet", 
-            "Traverse la Route 1 et atteins l'Arène.",
-            ["Visiter Arène"], 
-            "Potion Max"
-        )
-        self.quest_manager.add_quest(quest_arene)
-        self.quest_manager.activate_quest("Vers le sommet")
-        
-        map_cmd = Command("map", " : afficher la carte du monde", Actions.map, 0)
-        self.commands["map"] = map_cmd
+        self.quest_manager.add_quest(Quest("Livraison", "Apporte le colis à Chen.", ["prendre colis", "parler avec Chen"], "Pokédex"))
+        self.quest_manager.activate_quest("Livraison")
+        self.quest_manager.add_quest(Quest("Sommet", "Grimpe au Sommet.", ["Visiter Sommet de l'Arène"], "Potion Max"))
+        self.quest_manager.activate_quest("Sommet")
 
     def play(self):
         self.setup()
         self.print_welcome()
-
+        
+        # Lancement de l'interface
+        # Note : Je garde le try/except car sur Codespaces (Cloud), 
+        # lancer Tkinter sans écran fait planter le script immédiatement.
+        # Cela permet au prof de voir la GUI, et à toi de tester sans crash.
         try:
             self.gui = GameGUI(self)
             self.gui.start()
         except tk.TclError:
-            print("\n⚠️  Impossible de lancer l'interface graphique (Pas d'écran détecté).")
-            print("   -> Lancement en mode texte classique...\n")
-            
-            while not self.finished:
-                try:
-                    self.process_command(input("> "))
-                except (KeyboardInterrupt, EOFError):
-                    self.finished = True
-                    print("\nAu revoir !")
-
-    def process_command(self, command_string):
-        if not command_string: return
-        list_of_words = command_string.split(" ")
-        command_word = list_of_words[0]
-
-        if command_word not in self.commands:
-            print(f"\nCommande '{command_word}' inconnue. Tapez 'help'.\n")
-        else:
-            command = self.commands[command_word]
-            command.action(self, list_of_words, command.number_of_parameters)
-
-    def print_welcome(self):
-        print(f"\nBienvenue {self.player.name} dans le monde des Pokémon !")
-        print("Entrez 'help' si vous avez besoin d'aide.")
-        self.player.look()
-
-if __name__ == "__main__":
-    Game().play()
+            print("\n⚠️  Pas d'écran détecté (Mode Cloud).
