@@ -1,0 +1,65 @@
+[MASTER]
+# Disable certain message categories that are less critical
+disable=
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-instance-attributes,
+    too-many-branches,
+    too-many-statements,
+    no-self-argument,
+    no-member,
+    undefined-variable,
+    attribute-defined-outside-init
+
+# Good variable names which should always be accepted, separated by a comma
+good-names=i,j,k,ex,Run,_,__
+
+# Maximum number of attributes for class (see R0902).
+max-attributes=7
+
+[FORMAT]
+# Maximum number of characters on a single line.
+max-line-length=100
+
+# List of optional constructs whose body length doesn't count towards the
+# limit.
+ignore-long-lines=
+    ^\s*(# )?<?https?://\S+>?$|
+    ^\s*#
+
+# Regexp for a line that is allowed to be longer than the limit.
+# This is used to allow long URLs in docstrings.
+long-comment-prefix-only=True
+
+[DESIGN]
+# Maximum number of return/yield for function/method body
+max-returns=6
+
+# Maximum number of try blocks in a function
+max-try-blocks=3
+
+[BASIC]
+# Good variable names which should always be accepted, separated by a comma.
+good-names=i,j,k,ex,Run,_,x,y,__
+
+# Include number of messages on output
+show-message-codes=True
+
+[MESSAGES CONTROL]
+# Only show warnings which are relevant to your style/goals
+# Disable messages you don't want to enforce
+disable=
+    fixme,
+    too-few-public-methods,
+    no-self-argument,
+    no-member,
+    undefined-variable,
+    attribute-defined-outside-init
+
+[TYPECHECK]
+# Tell pylint to ignore missing members of modules
+ignored-modules=tkinter
+

@@ -1,135 +1,108 @@
-# Define the Player class.
+from item import Item
+
+
 class Player():
-    """
-    This class represents the player in the game. The player has a name and
-    a current room, and can move between rooms.
-
-    Attributes:
-        name (str): The name of the player.
-        current_room (Room): The room where the player is currently located.
-
-    Methods:
-        __init__(self, name): The constructor.
-        move(self, direction): Moves the player to another room.
-
-    Examples:
-
-    >>> player = Player("Alice")
-    >>> player.name
-    'Alice'
-    >>> player.current_room is None
-    True
-    """
-
-    # Define the constructor.
     def __init__(self, name):
         self.name = name
         self.current_room = None
         self.history = []
-        self.inventory = {} 
+        self.inventory = {}
 
-       
-    # Define the move method.
     def move(self, direction):
-        """
-        Moves the player in the specified direction.
+        # Sécurité : on utilise .get() pour éviter le crash
+        next_room = self.current_room.exits.get(direction)
 
-        If no room exists in that direction, an error message is displayed.
-
-        Args:
-            direction (str): The direction to move to.
-
-        Returns:
-            bool: True if the move was successful, False otherwise.
-        """
-        # Get the next room from the exits dictionary of the current room.
-        next_room = self.current_room.exits[direction]
-
-        # If the next room is None, print an error message and return False.
         if next_room is None:
             print("\nAucune porte dans cette direction !\n")
             return False
-       
-        # Set the current room to the next room.
-        self.current_room = next_room
+
         self.history.append(self.current_room)
-       
+        self.current_room = next_room
         print(self.current_room.get_long_description())
-       
-        history_output =self.get_history()
-        if history_output:
-            print(history_output)
-       
+        self.check_history()
         return True
-   
-    def get_history(self):      
-        # Si l'historique n'a qu'une seule pièce (la pièce actuelle), on ne liste rien.
-        if len(self.history) <= 1:
-            return ""
 
-        # Exclure la dernière pièce (qui est la pièce actuelle)
-        visited_rooms = self.history[:-1]
+    def check_history(self):
+        if len(self.history) > 0:
+            visited = ', '.join([r.name for r in set(self.history)])
+            print(f"Déjà visité : {visited}")
 
-        history_string = "\nVous avez déjà visité les pièces suivantes:\n"
-        for room in visited_rooms:
-            # Nous utilisons la description de la pièce (ex: "un marécage sombre...")
-            history_string += f"- {room.name}\n"
-           
-        return history_string
-   
     def back(self):
-        if len(self.history) <= 1:
-            print("\n vous êtes revenu en arrière,donc vous êtes")
+        if not self.history:
+            print("\nImpossible de revenir en arrière.")
             return False
-        self.history.pop()
-        self.current_room=self.history[-1]
-        print(f"\nVous êtes revenu en arrière.")
-       
+        self.current_room = self.history.pop()
+        print("\nVous êtes revenu en arrière.")
         print(self.current_room.get_long_description())
-       
-        history_output =self.get_history()
-        if history_output:
-            print(history_output)
         return True
-       
-    def history(self, history):
-        history=[]
-        history.append
 
-    
-    def get_inventory(self):
-        if not self.inventory:
-            return "Votre inventaire est vide."
-
-        inventory_string = "Vous disposez des items suivants :\n"
-        for item in self.inventory.values():
-            inventory_string += f"    - {item.name} : {item.description} ({item.weight} kg)\n"
-        return inventory_string
-    
     def look(self):
-        """
-        Displays the description of the current room and its items.
-        """
         print(self.current_room.get_long_description())
         print(self.current_room.get_inventory())
 
-    # ...existing code...
-
     def take(self, item_name):
-        """
-        Permet au joueur de prendre un objet dans la pièce actuelle.
-
-        Args:
-            item_name (str): Le nom de l'objet à prendre.
-        """
         if item_name in self.current_room.inventory:
-            item = self.current_room.inventory[item_name]
+            item = self.current_room.inventory.pop(item_name)
             self.inventory[item_name] = item
-            del self.current_room.inventory[item_name]
             print(f"Vous avez pris {item.name}.")
-        else:
-            print(f"L'objet '{item_name}' n'existe pas dans cette pièce.")
+            return True
+        print(f"L'objet '{item_name}' n'existe pas ici.")
+        return False
 
-        
+    def drop(self, item_name):
+        if item_name in self.inventory:
+            item = self.inventory.pop(item_name)
+            self.current_room.inventory[item_name] = item
+            print(f"Vous avez posé {item.name}.")
+            return True
+        print(f"Vous n'avez pas de '{item_name}'.")
+        return False
 
-        
+    def get_inventory(self):
+        if not self.inventory:
+            print("Votre inventaire est vide.")
+            return
+
+        print("Vous disposez des items suivants :")
+        for item in self.inventory.values():
+            print(f"    - {item.name} : {item.description} ({item.weight} kg)")
+
+    def talk(self, name):
+        if name in self.current_room.characters:
+            character = self.current_room.characters[name]
+            print(f"\n{name}: {character.get_msg()}\n")
+            return True
+        print(f"\nIl n'y a pas de '{name}' ici.")
+        return False
+
+    def add_reward(self, reward):
+        print(f"✨ Récompense reçue : {reward}")
+        # On crée un item fictif pour la récompense
+        if reward not in self.inventory:
+            self.inventory[reward] = Item(reward, "Récompense de quête", 0)
+
+    def capture(self, pokemon_name):
+        # Vérifie la pokeball (en minuscule !)
+        # Note : Dans ton setup game.py, tu as mis "Pokeball" avec majuscule
+        has_ball = "pokeball" in self.inventory or "Pokeball" in self.inventory
+
+        if not has_ball:
+            print("\n❌ Vous n'avez pas de Pokéball !")
+            return False
+
+        if pokemon_name in self.current_room.inventory:
+            pokemon = self.current_room.inventory.pop(pokemon_name)
+            print(f"\n🔴 Vous lancez une Pokéball sur {pokemon.name}...")
+            print("...")
+            print(f"✨ C'est attrapé ! {pokemon.name} est dans votre équipe !")
+
+            # Retire la pokeball (on cherche la bonne clé)
+            if "pokeball" in self.inventory:
+                del self.inventory["pokeball"]
+            elif "Pokeball" in self.inventory:
+                del self.inventory["Pokeball"]
+
+            self.inventory[pokemon_name] = pokemon
+            return True
+        print(f"\nIl n'y a pas de {pokemon_name} ici.")
+        return False
