@@ -1,184 +1,201 @@
-# Description: Game class
-
-# Import modules
+import tkinter as tk
+from tkinter import scrolledtext
+from tkinter import font
+import sys
 
 from room import Room
 from player import Player
 from command import Command
-from actions import Actions
-from Item import Item
+from action import Actions  
+from item import Item       
 from character import Character
+from quest import Quest, QuestManager
 
+class _StdoutRedirector:
+    def __init__(self, text_widget):
+        self.text_widget = text_widget
+
+    def write(self, string):
+        self.text_widget.insert('end', string)
+        self.text_widget.see('end')
+
+    def flush(self):
+        pass
+
+class GameGUI:
+    def __init__(self, game):
+        self.game = game
+        self.root = tk.Tk()
+        self.root.title("Pokémon : L'Aventure Textuelle")
+        self.root.geometry("800x600")
+
+        self.custom_font = font.Font(family="Courier", size=12)
+        
+        self.text_area = scrolledtext.ScrolledText(self.root, state='normal', wrap='word', font=self.custom_font)
+        self.text_area.pack(expand=True, fill='both', padx=10, pady=10)
+        
+        sys.stdout = _StdoutRedirector(self.text_area)
+
+        self.entry_var = tk.StringVar()
+        self.entry = tk.Entry(self.root, textvariable=self.entry_var, font=self.custom_font)
+        self.entry.pack(fill='x', padx=10, pady=5)
+        self.entry.bind("<Return>", self.process_input)
+        self.entry.focus_set()
+
+        self.submit_button = tk.Button(self.root, text="Envoyer", command=self.process_input)
+        self.submit_button.pack(pady=5)
+
+    def process_input(self, event=None):
+        user_input = self.entry_var.get()
+        if user_input.strip():
+            print(f"\n> {user_input}") 
+            self.game.process_command(user_input)
+            self.entry_var.set("")
+            if self.game.finished:
+                self.root.after(3000, self.root.destroy)
+
+    def start(self):
+        self.root.mainloop()
 
 class Game:
-
-    # Constructor
     def __init__(self):
         self.finished = False
         self.rooms = []
         self.commands = {}
         self.player = None
+        self.quest_manager = None
 
-
-   
     def setup(self):
+        # ... (Garde tes commandes help, quit, go, take, capture... au début) ...
+        # ... (Ne touche pas aux commandes, modifie juste à partir de "2. Setup rooms") ...
 
+        # 2. Setup rooms (Configuration de la Carte)
+        # ------------------------------------------
 
-        # Setup commands
-
-        help = Command("help", " : afficher cette aide", Actions.help, 0)
-        self.commands["help"] = help
-        quit = Command("quit", " : quitter le jeu", Actions.quit, 0)
-        self.commands["quit"] = quit
-        go = Command("go", " <direction> : se déplacer dans une direction cardinale (N, E, S, O)", Actions.go, 1)
-        self.commands["go"] = go
-        back = Command("back"," : revenir en arrière", Actions.back, 0)
-        self.commands["back"] = back
-       
-       
-        # Setup rooms
-
-#Village de départ
-
-
-        Maison_du_joueur = Room("Maison_du_joueur", "dans votre Maison.")
-        self.rooms.append(Maison_du_joueur)
-        Maison_du_professeur = Room("Maison_du_professeur ", "dans la maison du professeur")
-        self.rooms.append(Maison_du_professeur)
-        Arène = Room("Arène du Souffle Naissant", "au sein de l’Arène du Souffle Naissant, là où chaque lumière marque le début d’un nouvel espoir et où les premiers pas d’un véritable champion prennent forme.")
-        self.rooms.append(Arène)
-        Pilier = Room("Le Pilier de l’Aube Perdue", "au sein du Pilier de l’Aube Perdue, chaque jeune du village vient y déposer la main avant d’entamer son voyage, espérant recevoir la bénédiction silencieuse du Pilier.")
-        self.rooms.append(Pilier)
-        Route1 = Room("Route1", "sur le chemin où la biodiversité est plus que développée et vous enmenera jusqu'à la prochaine arène.")
-        self.rooms.append(Route1)
-
-        Maison_du_joueur.exits = {"N": Pilier, "E" : None, "S" : None, "O" : None}
-        Maison_du_professeur.exits = {"N" : Arène, "E" : None, "S" :Pilier, "O" :None}
-        Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
-        Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
-       
-        # history_cmd = Command("history", " : afficher les lieux déjà visités", Actions.history, 0)
-        #self.commands["history"] = history_cmd
-
-
-# Village d'Eau
-
-
-        Maison_du_joueur_eau = Room("Maison_du_joueur ","dans votre maison bercée par le clapotis de l’eau.")
-        self.rooms.append(Maison_du_joueur_eau)
-        Maison_du_maitre_eau = Room("Maison_du_maitre_eau ","dans la demeure du Maître, imprégnée de sagesse et d’embruns.")
-        self.rooms.append(Maison_du_maitre_eau)
-
-        Arène_des_Flots_Murmurants = Room("Arène des Flots Murmurants","au cœur de l’Arène des Flots Murmurants, où chaque combat suit le rythme des marées.")
-        self.rooms.append(Arène_des_Flots_Murmurants)
-
-        La_Source_des_Profondeurs = Room("La Source des Profondeurs","devant une source cristalline où l’eau semble observer chaque voyageur.")
-        self.rooms.append(La_Source_des_Profondeurs)
-
-        Route2 = Room("Route Aquatique","sur un sentier bordé de canaux menant vers de nouvelles terres.")
-        self.rooms.append(Route2)
-
-
-        Maison_du_joueur_eau.exits = {"N": Source_sacree, "E": None, "S": None, "O": None}
-        Maison_du_maitre_eau.exits = {"N": Arene_eau, "E": None, "S": Source_sacree, "O": None}
-        Arene_eau.exits = {"N": Route2, "E": None, "S": None, "O": None}
-        Source_sacree.exits = {"N": Arene_eau, "E": None, "S": None, "O": Maison_du_maitre_eau}
-
-
-## Village Voltéria
-
-
-        Maison_du_joueur_elec = Room("Maison de l’Étincelle","dans votre maison vibrante d’une énergie électrique constante.")
-        self.rooms.append(Maison_du_joueur_elec)
-
-        Maison_du_Maître_des_Courants= Room("Maison du Maître des Courants","dans la demeure du Maître, où l’air crépite d’électricité.")
-        self.rooms.append(Maison_du_Maître_des_Courants)
-
-        Arene_elec = Room("Arène de la Foudre Vive","au centre de l’Arène de la Foudre Vive, chaque affrontement fait jaillir des éclairs.")
-        self.rooms.append(Arene_elec)
-
-        Le_Conducteur_Ancestral= Room("Le Conducteur Ancestral","devant un pilier métallique captant la foudre depuis des générations.")
-        self.rooms.append(Le_Conducteur_Ancestral)
-
-        Route3 = Room("Route Orageuse","sur une route balayée par le vent et traversée d’arcs électriques.")
-        self.rooms.append(Route3)
-
-
-        Maison_du_joueur_elec.exits = {"N": Conducteur, "E": None, "S": None, "O": None}
-        Maison_du_maitre_elec.exits = {"N": Arene_elec, "E": None, "S": Conducteur, "O": None}
-        Arene_elec.exits = {"N": Route3, "E": None, "S": None, "O": None}
-        Conducteur.exits = {"N": Arene_elec, "E": None, "S": None, "O": Maison_du_maitre_elec}
-
-
-        # Create exits for rooms
-
-
-       
-
-        #Maison_du_joueur.exits = {"N": Pilier, "E" : None, "S" : None, "O" : None}
-        #Maison_du_professeur.exits = {"N" : Arène, "E" : None, "S" :Pilier, "O" :None}
-        #Arène.exits = {"N" : Route1, "E" : None, "S" : None, "O" : None}
-        #Pilier.exits = {"N" : Arène, "E" : None, "S" : None, "O" : Maison_du_professeur}
-        #Boutique.exits = {"N" : Arène, "E" : None, "S" : Pilier, "O" : Maison_du_professeur}
-        #castle.exits = {"N" : forest, "E" : swamp, "S" : None, "O" : None}
-       
-       
-        Arcktan = Item("Arcktan","Pokémon de type Plante",Arène,"...")
-        #Obalie=Character("Obalie","Pokémon de type ...",Arène,"...")
-        #Terhal=Character("Terhal","Pokémon de type Plante", Arène,"...")
-        #Poussifeu=Character("Poussifeu","Pokémon de type Feu",Arène,"...")
-        #Tarsal=Character("Tarsal","Pokémon de type Psy",Arène,"...")
-        #Ouisticram=Character("Ouisticram","Pokémonde type Feu","...")
-       
-        # Setup player and starting room
-
-        self.player = Player(input("\nEntrez votre nom: "))
-        self.player.current_room = Maison_du_joueur
-        self.player.history.append(self.player.current_room)
+        # Création des lieux
+        maison = Room("Maison", "dans ta chambre. C'est ici que tout commence.")
+        place = Room("Place du Village", "sur la place principale de Bourg-Palette.")
+        labo = Room("Labo de Chen", "dans le laboratoire rempli de livres et de machines.")
+        route1 = Room("Route 1", "sur un chemin de terre entouré de hautes herbes.")
+        arene = Room("Arène", "devant l'imposante Arène du Champion.")
         
-       # Exemple
-        forest = Room("Forest", "une forêt enchantée...")
-        gandalf = Character("Gandalf", "un magicien blanc", forest, ["Abracadabra !"])
+        # On ajoute les salles au jeu
+        self.rooms.extend([maison, place, labo, route1, arene])
 
-        # Ajouter le PNJ dans la pièce
-        forest.characters.append(gandalf)
+        # Connexions (Définition des sorties)
+        # Maison <-> Place
+        maison.exits = {"N": place}
+        place.exits = {"S": maison, "E": labo, "N": route1}
+        
+        # Place <-> Labo
+        labo.exits = {"O": place}
+        
+        # Place <-> Route 1
+        route1.exits = {"S": place, "N": arene}
+        
+        # Route 1 <-> Arène
+        arene.exits = {"S": route1}
 
-    # Play the game
+
+        # 3. Setup Items (Les Objets)
+        # ---------------------------
+        
+        # Maison : Pokéball + Potion
+        pokeball = Item("Pokeball", "Une balle rouge et blanche.")
+        maison.inventory["pokeball"] = pokeball
+        
+        potion = Item("Potion", "Un spray pour soigner les blessures.")
+        maison.inventory["potion"] = potion
+
+        # Labo : Colis (Objet de quête)
+        # Note : On met le colis au Labo pour l'exemple, ou à la Boutique si tu en crées une.
+        # Disons que Chen l'a oublié sur son bureau pour l'instant, ou qu'il faut le chercher ailleurs.
+        # Pour ta quête actuelle, mettons le colis dans la "Maison" pour que ce soit facile :
+        colis = Item("Colis", "Le paquet pour le Professeur.")
+        maison.inventory["colis"] = colis
+
+
+        # 4. Setup Characters & Pokémon (PNJ et Sauvages)
+        # -----------------------------------------------
+        
+        # Maman est à la maison
+        maman = Character("Maman", "Ta mère", maison, ["Coucou mon chéri !", "N'oublie pas ta casquette."])
+        maison.characters.append(maman)
+        
+        # Chen est au Labo
+        chen = Character("Chen", "Le Professeur Pokémon", labo, ["Bonjour !", "Ah, tu as mon colis ?"])
+        labo.characters.append(chen)
+
+        # Rattata est sur la Route 1 (En tant qu'Item pour la capture)
+        rattata = Item("Rattata", "Un Pokémon sauvage violet.")
+        route1.inventory["rattata"] = rattata
+
+
+        # 5. Setup Player & Quests
+        # ------------------------
+        name = input("\nEntrez votre nom: ")
+        self.player = Player(name)
+        self.player.current_room = maison  # On commence dans la maison
+
+        self.quest_manager = QuestManager(self.player)
+        
+        # Quête 1 : Le Colis
+        # Attention : Les objectifs doivent correspondre à tes actions !
+        quest_colis = Quest(
+            "Livraison Express", 
+            "Prends le colis chez toi et apporte-le à Chen au Labo.",
+            ["prendre colis", "parler avec Chen"], 
+            "Pokédex"
+        )
+        self.quest_manager.add_quest(quest_colis)
+        self.quest_manager.activate_quest("Livraison Express")
+        
+        # Quête 2 : L'Arène
+        quest_arene = Quest(
+            "Vers le sommet", 
+            "Traverse la Route 1 et atteins l'Arène.",
+            ["Visiter Arène"], 
+            "Potion Max"
+        )
+        self.quest_manager.add_quest(quest_arene)
+        self.quest_manager.activate_quest("Vers le sommet")
+        
+        map_cmd = Command("map", " : afficher la carte du monde", Actions.map, 0)
+        self.commands["map"] = map_cmd
+
     def play(self):
         self.setup()
         self.print_welcome()
-        # Loop until the game is finished
-        while not self.finished:
-            # Get the command from the player
-            self.process_command(input("> "))
-        return None
 
-    # Process the command entered by the player
-    def process_command(self, command_string) -> None:
+        try:
+            self.gui = GameGUI(self)
+            self.gui.start()
+        except tk.TclError:
+            print("\n⚠️  Impossible de lancer l'interface graphique (Pas d'écran détecté).")
+            print("   -> Lancement en mode texte classique...\n")
+            
+            while not self.finished:
+                try:
+                    self.process_command(input("> "))
+                except (KeyboardInterrupt, EOFError):
+                    self.finished = True
+                    print("\nAu revoir !")
 
-        # Split the command string into a list of words
+    def process_command(self, command_string):
+        if not command_string: return
         list_of_words = command_string.split(" ")
         command_word = list_of_words[0]
 
-        # If the command is not recognized, print an error message
-        if command_word not in self.commands.keys():
-            print()
-        # If the command is recognized, execute it
+        if command_word not in self.commands:
+            print(f"\nCommande '{command_word}' inconnue. Tapez 'help'.\n")
         else:
             command = self.commands[command_word]
             command.action(self, list_of_words, command.number_of_parameters)
 
-    # Print the welcome message
     def print_welcome(self):
-        print(f"\nBienvenue {self.player.name} dans ce jeu d'aventure !")
+        print(f"\nBienvenue {self.player.name} dans le monde des Pokémon !")
         print("Entrez 'help' si vous avez besoin d'aide.")
-        print(self.player.current_room.get_long_description())
-   
-
-def main():
-    # Create a game object and play the game
-    Game().play()
-   
+        self.player.look()
 
 if __name__ == "__main__":
-    main()
+    Game().play()
