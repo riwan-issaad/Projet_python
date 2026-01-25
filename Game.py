@@ -197,5 +197,3 @@ class Game:
             if not quest.is_completed: return False
         return True
 
-if __name__ == "__main__":
-    Game().play()
